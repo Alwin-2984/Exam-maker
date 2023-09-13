@@ -8,11 +8,15 @@ package com.innovaturelabs.training.contacts.controller;
 import com.innovaturelabs.training.contacts.entity.User;
 import com.innovaturelabs.training.contacts.form.UserForm;
 import com.innovaturelabs.training.contacts.service.UserService;
+import com.innovaturelabs.training.contacts.view.QuestinareDetailedView;
 import com.innovaturelabs.training.contacts.view.UserView;
 import java.util.Collection;
+import java.util.List;
+
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,5 +41,9 @@ public class UsersController {
     @GetMapping
     public Collection<User> list() {
         return userService.list();
+    }
+     @PostMapping("/contestents")
+     public UserView addContestents(@Valid @RequestBody UserForm form) {
+        return userService.addContestents(form);
     }
 }

@@ -6,6 +6,7 @@
 package com.innovaturelabs.training.contacts.service.impl;
 
 import com.innovaturelabs.training.contacts.entity.User;
+import com.innovaturelabs.training.contacts.entity.User.StatusRole;
 import com.innovaturelabs.training.contacts.exception.BadRequestException;
 import com.innovaturelabs.training.contacts.exception.NotFoundException;
 import com.innovaturelabs.training.contacts.form.LoginForm;
@@ -20,7 +21,7 @@ import com.innovaturelabs.training.contacts.security.util.TokenGenerator;
 import com.innovaturelabs.training.contacts.security.util.TokenGenerator.Status;
 import com.innovaturelabs.training.contacts.security.util.TokenGenerator.Token;
 import com.innovaturelabs.training.contacts.service.UserService;
-import com.innovaturelabs.training.contacts.view.ContactListView;
+import com.innovaturelabs.training.contacts.view.QuestinareListView;
 import com.innovaturelabs.training.contacts.view.LoginView;
 import com.innovaturelabs.training.contacts.view.UserView;
 import java.util.Collection;
@@ -56,6 +57,15 @@ public class UserServiceImpl implements UserService {
                 form.getName(),
                 form.getEmail(),
                 passwordEncoder.encode(form.getPassword())
+        )));
+    }
+       @Override
+    public UserView addContestents(UserForm form) {
+        return new UserView(userRepository.save(new User(
+                form.getName(),
+                form.getEmail(),
+                passwordEncoder.encode(form.getPassword()),
+                StatusRole.INACTIVE.value
         )));
     }
 

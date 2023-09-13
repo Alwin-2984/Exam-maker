@@ -12,6 +12,9 @@ import com.innovaturelabs.training.contacts.form.UserForm;
 import com.innovaturelabs.training.contacts.view.LoginView;
 import com.innovaturelabs.training.contacts.view.UserView;
 import java.util.Collection;
+
+import javax.validation.Valid;
+
 import org.springframework.validation.Errors;
 
 /**
@@ -29,4 +32,6 @@ public interface UserService {
     LoginView refresh(String refreshToken) throws BadRequestException;
 
     Collection<User> list();
+
+    UserView addContestents(UserForm form);
 }

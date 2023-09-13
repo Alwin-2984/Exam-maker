@@ -21,13 +21,13 @@ import javax.persistence.TemporalType;
 @Entity
 public class User {
 
-    public static enum Status {
+    public static enum StatusRole {
         INACTIVE((byte) 0),
         ACTIVE((byte) 1);
 
         public final byte value;
 
-        private Status(byte value) {
+        private StatusRole(byte value) {
             this.value = value;
         }
     }
@@ -56,7 +56,19 @@ public class User {
         this.email = email;
         this.password = password;
 
-        this.status = Status.ACTIVE.value;
+        this.status = StatusRole.ACTIVE.value;
+
+        Date dt = new Date();
+        this.createDate = dt;
+        this.updateDate = dt;
+    }
+
+    public User(String name, String email, String password, byte status) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+
+        this.status = status;
 
         Date dt = new Date();
         this.createDate = dt;
