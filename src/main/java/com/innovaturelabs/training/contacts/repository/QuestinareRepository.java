@@ -27,4 +27,6 @@ public interface QuestinareRepository extends Repository<Questinare, Integer> {
 
     List<Questinare> findById(Integer questionId);
 
+    Questinare findStatusByUserUserId(Integer currentUserId);
+
 }

@@ -25,4 +25,6 @@ public interface UserRepository extends Repository<User, Integer> {
     User save(User user);
     
     Collection<User> findAll();
+
+    User findStatusByUserId(Integer currentUserId);
 }

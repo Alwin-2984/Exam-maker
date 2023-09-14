@@ -8,7 +8,6 @@ package com.innovaturelabs.training.contacts.entity;
 import com.innovaturelabs.training.contacts.form.QuestinareForm;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Objects;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -26,23 +25,11 @@ import javax.persistence.TemporalType;
 @Entity
 public class Questinare {
 
-    public static enum Status {
-        DELETED((byte) 0),
-        ACTIVE((byte) 1);
-
-        public final byte value;
-
-        private Status(byte value) {
-            this.value = value;
-        }
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer questinareId;
     private String question;
     private String realAnswer;
-
     private byte level;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User user;
@@ -73,7 +60,7 @@ public class Questinare {
 
     public Questinare(QuestinareForm form, Integer userId) {
 
-        
+
         this.user = new User(userId);
         this.question = form.getQuestion();
         this.realAnswer = form.getRealAnswer();

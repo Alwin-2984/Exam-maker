@@ -22,8 +22,8 @@ import javax.persistence.TemporalType;
 public class User {
 
     public static enum StatusRole {
-        INACTIVE((byte) 0),
-        ACTIVE((byte) 1);
+        Candidate((byte) 0),
+        Admin((byte) 1);
 
         public final byte value;
 
@@ -56,7 +56,7 @@ public class User {
         this.email = email;
         this.password = password;
 
-        this.status = StatusRole.ACTIVE.value;
+        this.status = StatusRole.Admin.value;
 
         Date dt = new Date();
         this.createDate = dt;

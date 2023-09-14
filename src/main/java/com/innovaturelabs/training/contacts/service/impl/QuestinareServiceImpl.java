@@ -6,9 +6,12 @@
 package com.innovaturelabs.training.contacts.service.impl;
 
 import com.innovaturelabs.training.contacts.entity.Questinare;
+import com.innovaturelabs.training.contacts.entity.User;
+import com.innovaturelabs.training.contacts.exception.BadRequestException;
 import com.innovaturelabs.training.contacts.exception.NotFoundException;
 import com.innovaturelabs.training.contacts.form.QuestinareForm;
 import com.innovaturelabs.training.contacts.repository.QuestinareRepository;
+import com.innovaturelabs.training.contacts.repository.UserRepository;
 import com.innovaturelabs.training.contacts.security.util.SecurityUtil;
 import com.innovaturelabs.training.contacts.service.QuestinareService;
 import com.innovaturelabs.training.contacts.view.QuestinareDetailedView;
@@ -31,6 +34,9 @@ public class QuestinareServiceImpl implements QuestinareService {
     @Autowired
     private QuestinareRepository questinareRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
     public List<QuestinareDetailedView> list() {
         List<Questinare> questionnaires = questinareRepository.findAllByUserUserId(SecurityUtil.getCurrentUserId());
@@ -40,9 +46,14 @@ public class QuestinareServiceImpl implements QuestinareService {
     }
 
     @Override
-    public QuestinareDetailedView add(QuestinareForm form) {
-        return new QuestinareDetailedView(
-                questinareRepository.save(new Questinare(form, SecurityUtil.getCurrentUserId())));
+    public QuestinareDetailedView add(QuestinareForm form) throws BadRequestException {
+        User userStatus = userRepository.findStatusByUserId(SecurityUtil.getCurrentUserId());
+        if (userStatus.getStatus() == 1) {
+            return new QuestinareDetailedView(
+                    questinareRepository.save(new Questinare(form, SecurityUtil.getCurrentUserId())));
+        } else {
+            throw new BadRequestException("Invalid user");
+        }
     }
 
     public List<QuestinareDetailedView> getQuestionDetail(Integer questionId) {

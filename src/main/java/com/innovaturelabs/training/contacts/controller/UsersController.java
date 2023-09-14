@@ -42,7 +42,8 @@ public class UsersController {
     public Collection<User> list() {
         return userService.list();
     }
-     @PostMapping("/contestents")
+
+     @PostMapping("/Candidate")
      public UserView addContestents(@Valid @RequestBody UserForm form) {
         return userService.addContestents(form);
     }

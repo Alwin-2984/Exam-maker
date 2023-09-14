@@ -16,9 +16,9 @@ import java.util.List;
  * @author nirmal
  */
 
-
 public class QuestinareDetailedView {
     private Integer questionnaireId;
+
     public Integer getQuestionnaireId() {
         return questionnaireId;
     }
@@ -41,14 +41,6 @@ public class QuestinareDetailedView {
 
     public void setLevel(byte level) {
         this.level = level;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
     public List<String> getAnswers() {
@@ -76,8 +68,10 @@ public class QuestinareDetailedView {
     }
 
     private String question;
+    private String realAnswer;
+
     private byte level;
-    private String userName; // Assuming you want to include the user's name
+    private Integer userId; // Assuming you want to include the user's name
     private List<String> answers;
     private Date createDate;
     private Date updateDate;
@@ -86,10 +80,27 @@ public class QuestinareDetailedView {
         this.questionnaireId = questionnaire.getQuestinareId();
         this.question = questionnaire.getQuestion();
         this.level = questionnaire.getLevel();
-        this.userName = questionnaire.getUser().getName(); // Assuming User has a 'userName' property
+        this.userId = questionnaire.getUser().getUserId(); // Assuming User has a 'userName' property
         this.answers = new ArrayList<>(questionnaire.getAnswers());
         this.createDate = questionnaire.getCreateDate();
         this.updateDate = questionnaire.getUpdateDate();
+        this.realAnswer = questionnaire.getRealAnswer();
+    }
+
+    public String getRealAnswer() {
+        return realAnswer;
+    }
+
+    public void setRealAnswer(String realAnswer) {
+        this.realAnswer = realAnswer;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     // Getters and setters for the fields

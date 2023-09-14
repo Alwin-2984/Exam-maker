@@ -56,24 +56,22 @@ public class UserServiceImpl implements UserService {
         return new UserView(userRepository.save(new User(
                 form.getName(),
                 form.getEmail(),
-                passwordEncoder.encode(form.getPassword())
-        )));
+                passwordEncoder.encode(form.getPassword()))));
     }
-       @Override
+
+    @Override
     public UserView addContestents(UserForm form) {
         return new UserView(userRepository.save(new User(
                 form.getName(),
                 form.getEmail(),
                 passwordEncoder.encode(form.getPassword()),
-                StatusRole.INACTIVE.value
-        )));
+                StatusRole.Candidate.value)));
     }
 
     @Override
     public UserView currentUser() {
         return new UserView(
-                userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(NotFoundException::new)
-        );
+                userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(NotFoundException::new));
     }
 
     @Override
@@ -88,7 +86,8 @@ public class UserServiceImpl implements UserService {
 
         String id = String.format("%010d", user.getUserId());
         Token accessToken = tokenGenerator.create(PURPOSE_ACCESS_TOKEN, id, securityConfig.getAccessTokenExpiry());
-        Token refreshToken = tokenGenerator.create(PURPOSE_REFRESH_TOKEN, id + user.getPassword(), securityConfig.getRefreshTokenExpiry());
+        Token refreshToken = tokenGenerator.create(PURPOSE_REFRESH_TOKEN, id + user.getPassword(),
+                securityConfig.getRefreshTokenExpiry());
         return new LoginView(user, accessToken, refreshToken);
     }
 
@@ -112,15 +111,15 @@ public class UserServiceImpl implements UserService {
 
         String password = status.data.substring(10);
 
-        User user = userRepository.findByUserIdAndPassword(userId, password).orElseThrow(UserServiceImpl::badRequestException);
+        User user = userRepository.findByUserIdAndPassword(userId, password)
+                .orElseThrow(UserServiceImpl::badRequestException);
 
         String id = String.format("%010d", user.getUserId());
         Token accessToken = tokenGenerator.create(PURPOSE_ACCESS_TOKEN, id, securityConfig.getAccessTokenExpiry());
         return new LoginView(
                 user,
                 new LoginView.TokenView(accessToken.value, accessToken.expiry),
-                new LoginView.TokenView(refreshToken, status.expiry)
-        );
+                new LoginView.TokenView(refreshToken, status.expiry));
     }
 
     private static BadRequestException badRequestException() {
