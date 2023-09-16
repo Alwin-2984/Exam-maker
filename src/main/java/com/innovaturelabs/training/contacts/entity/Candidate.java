@@ -32,6 +32,8 @@ public class Candidate {
     private String realAnswer;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User user;
+    private int answerStatus;
+
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Questinare questinare;
     @Temporal(TemporalType.TIMESTAMP)
@@ -39,7 +41,7 @@ public class Candidate {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateDate;
 
-    public Candidate( String realAnswer, User user, Date createDate, Date updateDate) {
+    public Candidate(String realAnswer, User user, Date createDate, Date updateDate) {
         this.realAnswer = realAnswer;
         this.user = user;
         this.createDate = createDate;
@@ -49,11 +51,12 @@ public class Candidate {
     public Candidate() {
     }
 
-    public Candidate(CandidateForm form, Integer userId) {
+    public Candidate(CandidateForm form, int i, Integer userId) {
 
         this.user = new User(userId);
         this.questinare = new Questinare(form.getQuestinareId());
         this.realAnswer = form.getRealAnswer();
+        this.answerStatus = i;
         Date dt = new Date();
         this.createDate = dt;
         this.updateDate = dt;
@@ -104,7 +107,7 @@ public class Candidate {
 
     @Override
     public String toString() {
-        return  ", realAnswer=" + realAnswer + ", user=" + user
+        return ", realAnswer=" + realAnswer + ", user=" + user
                 + ", createDate=" + createDate + ", updateDate=" + updateDate + "]";
     }
 
@@ -123,5 +126,15 @@ public class Candidate {
     public void setQuestinare(Questinare questinare) {
         this.questinare = questinare;
     }
+
+    public int getAnswerStatus() {
+        return answerStatus;
+    }
+
+    public void setAnswerStatus(int answerStatus) {
+        this.answerStatus = answerStatus;
+    }
+
+
 
 }

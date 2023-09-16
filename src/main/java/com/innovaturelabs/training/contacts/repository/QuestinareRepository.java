@@ -29,4 +29,9 @@ public interface QuestinareRepository extends Repository<Questinare, Integer> {
 
     Questinare findStatusByUserUserId(Integer currentUserId);
 
+
+    List<Questinare> findAllByLevel(byte level);
+
+    Questinare findByQuestinareIdAndLevel(Integer questinareId, byte level);
+
 }

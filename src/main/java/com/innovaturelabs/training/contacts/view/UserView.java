@@ -19,6 +19,8 @@ public class UserView {
     private final String name;
     private final String email;
     private final short status;
+    private final short level;
+
     @Json.DateTimeFormat
     private final Date createDate;
     @Json.DateTimeFormat
@@ -29,6 +31,8 @@ public class UserView {
         this.name = user.getName();
         this.email = user.getEmail();
         this.status = user.getStatus();
+        this.level = user.getLevel();
+
         this.createDate = user.getCreateDate();
         this.updateDate = user.getUpdateDate();
     }
@@ -55,5 +59,9 @@ public class UserView {
 
     public Date getUpdateDate() {
         return updateDate;
+    }
+
+    public short getLevel() {
+        return level;
     }
 }

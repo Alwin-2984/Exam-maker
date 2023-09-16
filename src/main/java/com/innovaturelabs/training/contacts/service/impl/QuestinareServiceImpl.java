@@ -17,7 +17,9 @@ import com.innovaturelabs.training.contacts.service.QuestinareService;
 import com.innovaturelabs.training.contacts.view.QuestinareDetailedView;
 import com.innovaturelabs.training.contacts.view.QuestinareListView;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,14 +41,38 @@ public class QuestinareServiceImpl implements QuestinareService {
 
     @Override
     public List<QuestinareDetailedView> list() {
-        List<Questinare> questionnaires = questinareRepository.findAllByUserUserId(SecurityUtil.getCurrentUserId());
-        return questionnaires.stream()
-                .map(QuestinareDetailedView::new)
-                .collect(Collectors.toList());
+
+        User userStatus = userRepository.findStatusByUserId(SecurityUtil.getCurrentUserId());
+        if (userStatus.getStatus() == 1) {
+            List<Questinare> questionnaires = questinareRepository.findAllByUserUserId(SecurityUtil.getCurrentUserId());
+
+            return questionnaires.stream()
+                    .map(QuestinareDetailedView::new)
+                    .collect(Collectors.toList());
+        } else {
+
+            List<Questinare> questionnaires = questinareRepository.findAllByLevel(userStatus.getLevel());
+
+            return questionnaires.stream()
+                    .map(QuestinareDetailedView::new)
+                    .collect(Collectors.toList());
+
+            // return Collections.emptyList();
+        }
+
     }
 
     @Override
     public QuestinareDetailedView add(QuestinareForm form) throws BadRequestException {
+        int a = form.getAnswers().size();
+        for (String answer : form.getAnswers()) {
+            if (!Objects.equals(answer, form.getRealAnswer())) {
+                a = a - 1;
+                if (a == 0) {
+                    throw new BadRequestException("real answer must match options");
+                }
+            }
+        }
         User userStatus = userRepository.findStatusByUserId(SecurityUtil.getCurrentUserId());
         if (userStatus.getStatus() == 1) {
             return new QuestinareDetailedView(

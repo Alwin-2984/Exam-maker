@@ -5,7 +5,9 @@
  */
 package com.innovaturelabs.training.contacts.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,15 +41,43 @@ public class CandidateServiceImpl implements CandidateService {
     private UserRepository userRepository;
 
     @Override
-    public CandidateDetailedView add(CandidateForm form) throws BadRequestException {
-        User userStatus = userRepository.findStatusByUserId(SecurityUtil.getCurrentUserId());
-        if (userStatus.getStatus() == 0) {
-            return new CandidateDetailedView(
-                    candidateRepository.save(new Candidate(form, SecurityUtil.getCurrentUserId())));
-        } else {
-            throw new BadRequestException("Invalid user");
+    public List<CandidateDetailedView> add(List<CandidateForm> forms) {
+        List<CandidateDetailedView> detailedViews = new ArrayList<>();
+
+        for (CandidateForm form : forms) {
+            // Get the current user's status and qualification level
+            User userStatus = userRepository.findStatusByUserId(SecurityUtil.getCurrentUserId());
+
+            // Check if a candidate with the same questionnaire ID already exists
+            Boolean candidateExists = candidateRepository.findByQuestinareQuestinareId(form.getQuestinareId())
+                    .orElse(false);
+            if (Boolean.TRUE.equals(candidateExists)) {
+                throw new BadRequestException("Candidate with the same questionnaire ID already submitted");
+            }
+
+            // Retrieve the questionnaire associated with the form's questinareId
+            Questinare questionnaires = questinareRepository.findByQuestinareIdAndLevel(
+                    form.getQuestinareId(), userStatus.getLevel());
+
+            // Check if the user's status is active and their qualification level matches
+            // the questionnaire's level
+
+            if (userStatus.getStatus() == 0 && Objects.equals(questionnaires.getLevel(), userStatus.getLevel())) {
+                int score = Objects.equals(questionnaires.getRealAnswer(), form.getRealAnswer()) ? 1 : 0;
+
+                // Create and save the new candidate
+                Candidate newCandidate = new Candidate(form, score, SecurityUtil.getCurrentUserId());
+                Candidate savedCandidate = candidateRepository.save(newCandidate);
+
+                // Create a detailed view for the saved candidate
+                CandidateDetailedView detailedView = new CandidateDetailedView(savedCandidate);
+                detailedViews.add(detailedView);
+            } else {
+                throw new BadRequestException("Invalid user status or qualification level");
+            }
         }
 
+        return detailedViews;
     }
 
 }

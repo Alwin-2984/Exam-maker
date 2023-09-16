@@ -6,10 +6,12 @@
 package com.innovaturelabs.training.contacts.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.repository.Repository;
 
 import com.innovaturelabs.training.contacts.entity.Candidate;
+import com.innovaturelabs.training.contacts.entity.User;
 
 /**
  *
@@ -24,5 +26,7 @@ public interface CandidateRepository extends Repository<Candidate, Integer> {
     List<Candidate> findByUserUserId(Integer userId);
 
     List<Candidate> findById(Integer questionId);
+
+    Optional<Boolean> findByQuestinareQuestinareId(Integer questinareId);
 
 }

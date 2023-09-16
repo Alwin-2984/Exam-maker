@@ -6,6 +6,7 @@
 package com.innovaturelabs.training.contacts.service.impl;
 
 import com.innovaturelabs.training.contacts.entity.User;
+import com.innovaturelabs.training.contacts.entity.User.Level;
 import com.innovaturelabs.training.contacts.entity.User.StatusRole;
 import com.innovaturelabs.training.contacts.exception.BadRequestException;
 import com.innovaturelabs.training.contacts.exception.NotFoundException;
@@ -65,7 +66,8 @@ public class UserServiceImpl implements UserService {
                 form.getName(),
                 form.getEmail(),
                 passwordEncoder.encode(form.getPassword()),
-                StatusRole.Candidate.value)));
+                StatusRole.Candidate.value,
+                Level.LEVEL1.value)));
     }
 
     @Override

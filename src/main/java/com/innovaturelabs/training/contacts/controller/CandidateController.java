@@ -6,12 +6,14 @@
 package com.innovaturelabs.training.contacts.controller;
 
 
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import java.util.List;
 import com.innovaturelabs.training.contacts.form.CandidateForm;
 import com.innovaturelabs.training.contacts.service.CandidateService;
 import com.innovaturelabs.training.contacts.view.CandidateDetailedView;
@@ -28,8 +30,7 @@ public class CandidateController {
     private CandidateService candidateService;
 
     @PostMapping
-    public CandidateDetailedView add( @RequestBody CandidateForm form) {
-        return candidateService.add(form);
+    public List<CandidateDetailedView> add(@RequestBody List<CandidateForm> forms) {
+        return candidateService.add(forms);
     }
-
 }

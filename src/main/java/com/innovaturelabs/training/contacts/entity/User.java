@@ -21,7 +21,7 @@ import javax.persistence.TemporalType;
 @Entity
 public class User {
 
-    public static enum StatusRole {
+    public enum StatusRole {
         Candidate((byte) 0),
         Admin((byte) 1);
 
@@ -32,12 +32,26 @@ public class User {
         }
     }
 
+    public enum Level {
+        LEVEL1((byte) 1),
+        LEVEL2((byte) 2),
+        LEVEL3((byte) 3),
+        LEVEL4((byte) 4);
+
+        public final byte value;
+
+        private Level(byte value) {
+            this.value = value;
+        }
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
     private String name;
     private String email;
     private String password;
+    private byte level;
     private byte status;
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
@@ -55,7 +69,7 @@ public class User {
         this.name = name;
         this.email = email;
         this.password = password;
-
+        this.level = 1;
         this.status = StatusRole.Admin.value;
 
         Date dt = new Date();
@@ -63,13 +77,13 @@ public class User {
         this.updateDate = dt;
     }
 
-    public User(String name, String email, String password, byte status) {
+    public User(String name, String email, String password, byte status, byte level) {
         this.name = name;
         this.email = email;
         this.password = password;
 
         this.status = status;
-
+        this.level = level;
         Date dt = new Date();
         this.createDate = dt;
         this.updateDate = dt;
@@ -150,5 +164,13 @@ public class User {
     @Override
     public String toString() {
         return "com.innovaturelabs.training.contacts.entity.User[ userId=" + userId + " ]";
+    }
+
+    public byte getLevel() {
+        return level;
+    }
+
+    public void setLevel(byte level) {
+        this.level = level;
     }
 }
