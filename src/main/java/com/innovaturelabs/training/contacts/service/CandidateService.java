@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.innovaturelabs.training.contacts.form.CandidateForm;
 import com.innovaturelabs.training.contacts.view.CandidateDetailedView;
+import com.innovaturelabs.training.contacts.view.QuestinClientView;
 import com.innovaturelabs.training.contacts.view.QuestinareDetailedView;
 
 /**
@@ -19,6 +20,6 @@ public interface CandidateService {
 
     List<CandidateDetailedView> add(List<CandidateForm> form);
 
-    List<QuestinareDetailedView> list();
+    List<QuestinClientView> list();
 
 }

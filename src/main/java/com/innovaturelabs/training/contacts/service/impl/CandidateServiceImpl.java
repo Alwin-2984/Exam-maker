@@ -26,7 +26,7 @@ import com.innovaturelabs.training.contacts.repository.UserRepository;
 import com.innovaturelabs.training.contacts.security.util.SecurityUtil;
 import com.innovaturelabs.training.contacts.service.CandidateService;
 import com.innovaturelabs.training.contacts.view.CandidateDetailedView;
-import com.innovaturelabs.training.contacts.view.QuestinareDetailedView;
+import com.innovaturelabs.training.contacts.view.QuestinClientView;
 
 /**
  *
@@ -47,11 +47,12 @@ public class CandidateServiceImpl implements CandidateService {
     @Override
     public List<CandidateDetailedView> add(List<CandidateForm> forms) {
         List<CandidateDetailedView> detailedViews = new ArrayList<>();
-        int a = 10;
-        for (CandidateForm form : forms) {
-            // Get the current user's status and qualification level
-            User userStatus = userRepository.findStatusByUserId(SecurityUtil.getCurrentUserId());
+        int correctAnswers = 0;
 
+        // Get the current user's status and qualification level
+        User userStatus = userRepository.findStatusByUserId(SecurityUtil.getCurrentUserId());
+        List<Candidate> candidatesToSave = new ArrayList<>(); // Collect new candidates here
+        for (CandidateForm form : forms) {
             // Check if a candidate with the same questionnaire ID already exists
             Candidate existingCandidate = candidateRepository.findByQuestinareQuestinareId(form.getQuestinareId());
             if (existingCandidate != null) {
@@ -62,91 +63,84 @@ public class CandidateServiceImpl implements CandidateService {
             Questinare questionnaires = questinareRepository.findByQuestinareIdAndLevel(
                     form.getQuestinareId(), userStatus.getLevel());
 
-            System.out.println(form.getQuestinareId()
-                    + "-----------------------===QuestinareId===--------------------------------");
-
-            System.out.println(
-                    userStatus.getLevel() + "------------------------====UserLevel==--------------------------------");
-            System.out.println(questionnaires.getLevel()
-                    + "---------------------------QuestinareLevel-------------------------------");
+            // Check if the retrieved questionnaire is null and throw a BadRequestException
+            // if it is
+            if (questionnaires == null) {
+                throw new BadRequestException("Questionnaire not found for the provided ID and level");
+            }
 
             // Check if the user's status is active and their qualification level matches
             // the questionnaire's level
-
             if (userStatus.getStatus() == 0 && Objects.equals(questionnaires.getLevel(), userStatus.getLevel())) {
                 int score = Objects.equals(questionnaires.getRealAnswer(), form.getRealAnswer()) ? 1 : 0;
-                a = a - score;
+                correctAnswers += score;
 
-                // Create and save the new candidate
+                // Create the new candidate but do not save it immediately
                 Candidate newCandidate = new Candidate(form, score, SecurityUtil.getCurrentUserId());
-                Candidate savedCandidate = candidateRepository.save(newCandidate);
+                detailedViews.add(new CandidateDetailedView(newCandidate));
 
-                // Create a detailed view for the saved candidate
-                CandidateDetailedView detailedView = new CandidateDetailedView(savedCandidate);
-                detailedViews.add(detailedView);
+                // Instead, add the new candidate to a list
+                candidatesToSave.add(newCandidate);
             } else {
                 throw new BadRequestException("Invalid user status or qualification level");
             }
-
         }
-        if (a <= 3) {
+
+        int requiredCorrectAnswers = (int) Math.ceil(0.7 * forms.size());
+
+        if (correctAnswers >= requiredCorrectAnswers) {
             User user = userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(NotFoundException::new);
-            if (user.getLevel() == User.Level.LEVEL1) {
-                user.setLevel(User.Level.LEVEL2);
-                userRepository.save(user);
-            } else if (user.getLevel() == User.Level.LEVEL2) {
-                user.setLevel(User.Level.LEVEL3);
-                userRepository.save(user);
-            } else if (user.getLevel() == User.Level.LEVEL3) {
-                user.setLevel(User.Level.LEVEL4);
-                userRepository.save(user);
+
+            switch (user.getLevel()) {
+                case LEVEL1:
+                    user.setLevel(User.Level.LEVEL2);
+                    break;
+                case LEVEL2:
+                    user.setLevel(User.Level.LEVEL3);
+                    break;
+                case LEVEL3:
+                    user.setLevel(User.Level.LEVEL4);
+                    break;
+                default:
+                    break;
             }
 
+            userRepository.save(user);
+        }
+        // Loop through and save each candidate individually
+        for (Candidate candidate : candidatesToSave) {
+            candidateRepository.save(candidate);
         }
 
         return detailedViews;
     }
 
-    // @Override
-    // public List<QuestinareDetailedView> list() {
-    // User userStatus =
-    // userRepository.findStatusByUserId(SecurityUtil.getCurrentUserId());
-
-    // List<Questinare> questionnaires =
-    // questinareRepository.findAllByLevelAndQuestinareIdNot(userStatus.getLevel());
-
-    // return questionnaires.stream()
-    // .map(QuestinareDetailedView::new)
-    // .collect(Collectors.toList());
-
-    // }
-
     @Override
-    public List<QuestinareDetailedView> list() {
+    public List<QuestinClientView> list() {
         // Get the current user's level
         User userStatus = userRepository.findStatusByUserId(SecurityUtil.getCurrentUserId());
         Level userLevel = userStatus.getLevel();
-    
+
         // Find questions with a level equal to the user's level
         List<Questinare> questionnaires = questinareRepository.findAllByLevel(userLevel);
-    
+
         // Get a list of questinare_ids that the user has already answered
         List<Integer> answeredQuestionIds = candidateRepository.findAllByUserUserId(SecurityUtil.getCurrentUserId())
                 .stream()
-                .map(candidate -> candidate.getQuestinare().getQuestinareId()) // Assuming Candidate has a reference to Questinare
+                .map(candidate -> candidate.getQuestinare().getQuestinareId()) // Assuming Candidate has a reference to
+                                                                               // Questinare
                 .collect(Collectors.toList());
-    
+
         // Filter out questions that the user has already answered
         List<Questinare> filteredQuestionnaires = questionnaires.stream()
                 .filter(questionnaire -> !answeredQuestionIds.contains(questionnaire.getQuestinareId()))
+                .limit(10)
                 .collect(Collectors.toList());
-    
-        // Map the filtered questions to QuestinareDetailedView objects
+
+        // Map the first 10 questions to QuestinClientView objects
         return filteredQuestionnaires.stream()
-                .map(QuestinareDetailedView::new)
+                .map(QuestinClientView::new)
                 .collect(Collectors.toList());
     }
-    
-
 
 }

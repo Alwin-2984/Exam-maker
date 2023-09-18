@@ -5,7 +5,8 @@
  */
 package com.innovaturelabs.training.contacts.controller;
 
-import java.util.stream.Collectors;
+import java.security.Principal;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,12 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Principal;
-import java.util.List;
 import com.innovaturelabs.training.contacts.form.CandidateForm;
 import com.innovaturelabs.training.contacts.service.CandidateService;
 import com.innovaturelabs.training.contacts.view.CandidateDetailedView;
-import com.innovaturelabs.training.contacts.view.QuestinareDetailedView;
+import com.innovaturelabs.training.contacts.view.QuestinClientView;
 
 /**
  *
@@ -33,7 +32,7 @@ public class CandidateController {
     private CandidateService candidateService;
 
     @GetMapping("/Questions")
-    public List<QuestinareDetailedView> list(Principal p) {
+    public List<QuestinClientView> list(Principal p) {
         return candidateService.list();
     }
 
