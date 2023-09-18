@@ -28,6 +28,7 @@ import com.innovaturelabs.training.contacts.security.util.SecurityUtil;
 import com.innovaturelabs.training.contacts.service.CandidateService;
 import com.innovaturelabs.training.contacts.view.CandidateDetailedView;
 import com.innovaturelabs.training.contacts.view.QuestinClientView;
+import com.innovaturelabs.training.contacts.view.TotalPointView;
 
 /**
  *
@@ -52,8 +53,11 @@ public class CandidateServiceImpl implements CandidateService {
 
         // Get the current user's status and qualification level
         User userStatus = userRepository.findStatusByUserId(SecurityUtil.getCurrentUserId());
+
         List<Candidate> candidatesToSave = new ArrayList<>(); // Collect new candidates here
+
         for (CandidateForm form : forms) {
+
             // Check if a candidate with the same questionnaire ID already exists
             Candidate existingCandidate = candidateRepository
                     .findByQuestinareQuestinareIdAndUserUserId(form.getQuestinareId(), SecurityUtil.getCurrentUserId());
@@ -74,6 +78,7 @@ public class CandidateServiceImpl implements CandidateService {
             // Check if the user's status is active and their qualification level matches
             // the questionnaire's level
             if (userStatus.getStatus() == 0 && Objects.equals(questionnaires.getLevel(), userStatus.getLevel())) {
+
                 int score = Objects.equals(questionnaires.getRealAnswer(), form.getRealAnswer()) ? 1 : 0;
                 correctAnswers += score;
 
@@ -83,12 +88,28 @@ public class CandidateServiceImpl implements CandidateService {
 
                 // Instead, add the new candidate to a list
                 candidatesToSave.add(newCandidate);
+
             } else {
                 throw new BadRequestException("Invalid user status or qualification level");
             }
         }
 
-        int requiredCorrectAnswers = (int) Math.ceil(0.7 * forms.size());
+        int requiredCorrectAnswers;
+
+        switch (forms.size()) {
+            case 3:
+                requiredCorrectAnswers = getRequiredCorrectAnswers(0.66, forms);
+                break;
+            case 2:
+                requiredCorrectAnswers = getRequiredCorrectAnswers(0.5, forms);
+                break;
+            case 1:
+                requiredCorrectAnswers = forms.size();
+                break;
+            default:
+                requiredCorrectAnswers = getRequiredCorrectAnswers(0.7, forms);
+                break;
+        }
 
         if (correctAnswers >= requiredCorrectAnswers) {
             User user = userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(NotFoundException::new);
@@ -109,12 +130,17 @@ public class CandidateServiceImpl implements CandidateService {
 
             userRepository.save(user);
         }
+
         // Loop through and save each candidate individually
         for (Candidate candidate : candidatesToSave) {
             candidateRepository.save(candidate);
         }
 
         return detailedViews;
+    }
+
+    private int getRequiredCorrectAnswers(double targetPercentage, List<CandidateForm> forms) {
+        return (int) Math.ceil(targetPercentage * forms.size());
     }
 
     @Override
@@ -150,15 +176,48 @@ public class CandidateServiceImpl implements CandidateService {
     public void delete() {
         // Get the current user's ID
         Integer currentUserId = SecurityUtil.getCurrentUserId();
-        
+
         User user = userRepository.findById(currentUserId).orElseThrow(NotFoundException::new);
-        
+
         user.setLevel(User.Level.LEVEL1);
-        
+
         userRepository.save(user);
-        
+
         // Delete all data associated with the current user
         candidateRepository.deleteAllByUserUserId(currentUserId);
+    }
+
+    @Override
+    public List<TotalPointView> totalpoint() {
+        List<TotalPointView> totalPointsList = new ArrayList<>();
+
+        // Get a list of distinct user IDs from the candidate table
+        List<Integer> userIds = candidateRepository.findDistinctUserIds();
+
+        User userStatus = userRepository.findStatusByUserId(SecurityUtil.getCurrentUserId());
+
+        if (userStatus.getStatus() == 0) {
+            int totalPoints = candidateRepository.calculateTotalPointsByUserId(SecurityUtil.getCurrentUserId());
+
+            // Create a QuestinClientView object with the user ID and total points
+            TotalPointView totalPointView = new TotalPointView(SecurityUtil.getCurrentUserId(), totalPoints);
+
+            // Add the QuestinClientView object to the list
+            totalPointsList.add(totalPointView);
+        } else {
+            for (Integer userId : userIds) {
+                // Calculate the total points for each user
+                int totalPoints = candidateRepository.calculateTotalPointsByUserId(userId);
+
+                // Create a QuestinClientView object with the user ID and total points
+                TotalPointView totalPointView = new TotalPointView(userId, totalPoints);
+
+                // Add the QuestinClientView object to the list
+                totalPointsList.add(totalPointView);
+            }
+        }
+
+        return totalPointsList;
     }
 
 }

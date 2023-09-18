@@ -1,31 +1,18 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.innovaturelabs.training.contacts.repository;
 
-import java.util.List;
-import java.util.Optional;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 
-import org.springframework.data.repository.Repository;
+import java.util.List;
 
 import com.innovaturelabs.training.contacts.entity.Candidate;
-import com.innovaturelabs.training.contacts.entity.User;
 
-/**
- *
- * @author nirmal
- */
-public interface CandidateRepository extends Repository<Candidate, Integer> {
-
-    Candidate save(Candidate candidate);
+public interface CandidateRepository extends CrudRepository<Candidate, Integer> {
 
     List<Candidate> findAllByUserUserId(Integer currentUserId);
 
     List<Candidate> findByUserUserId(Integer userId);
 
-    List<Candidate> findById(Integer questionId);
 
     Candidate findByQuestinareQuestinareId(Integer questinareId);
 
@@ -35,4 +22,11 @@ public interface CandidateRepository extends Repository<Candidate, Integer> {
 
     void deleteAllByUserUserId(Integer currentUserId);
 
+    // Custom query to find distinct user IDs
+    @Query("SELECT DISTINCT c.user.userId FROM Candidate c")
+    List<Integer> findDistinctUserIds();
+
+    // Custom query to calculate total points for a user
+    @Query("SELECT SUM(c.answerStatus) FROM Candidate c WHERE c.user.userId = :userId")
+    Integer calculateTotalPointsByUserId(Integer userId);
 }

@@ -5,7 +5,7 @@
  */
 package com.innovaturelabs.training.contacts.form;
 
-
+import javax.validation.constraints.NotBlank;
 
 /**
  *
@@ -13,10 +13,10 @@ package com.innovaturelabs.training.contacts.form;
  */
 public class CandidateForm {
 
-
-
+    @NotBlank
     private Integer questinareId;
 
+    @NotBlank
     private String realAnswer;
 
     public Integer getQuestinareId() {
@@ -34,11 +34,5 @@ public class CandidateForm {
     public void setRealAnswer(String realAnswer) {
         this.realAnswer = realAnswer;
     }
-
-
-
-
-
-
 
 }

@@ -20,6 +20,7 @@ import com.innovaturelabs.training.contacts.form.CandidateForm;
 import com.innovaturelabs.training.contacts.service.CandidateService;
 import com.innovaturelabs.training.contacts.view.CandidateDetailedView;
 import com.innovaturelabs.training.contacts.view.QuestinClientView;
+import com.innovaturelabs.training.contacts.view.TotalPointView;
 
 /**
  *
@@ -35,6 +36,11 @@ public class CandidateController {
     @GetMapping("/Questions")
     public List<QuestinClientView> list(Principal p) {
         return candidateService.list();
+    }
+
+     @GetMapping("/totalpoint")
+    public List<TotalPointView> totalpoint(Principal p) {
+        return candidateService.totalpoint();
     }
 
     @PostMapping
