@@ -9,6 +9,7 @@ import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,6 +40,11 @@ public class CandidateController {
     @PostMapping
     public List<CandidateDetailedView> add(@RequestBody List<CandidateForm> forms) {
         return candidateService.add(forms);
+    }
+
+    @DeleteMapping("/allprogress")
+    public void delete() {
+    candidateService.delete();
     }
 
 }

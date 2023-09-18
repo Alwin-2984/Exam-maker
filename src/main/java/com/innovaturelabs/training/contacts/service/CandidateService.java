@@ -22,4 +22,6 @@ public interface CandidateService {
 
     List<QuestinClientView> list();
 
+    void delete();
+
 }

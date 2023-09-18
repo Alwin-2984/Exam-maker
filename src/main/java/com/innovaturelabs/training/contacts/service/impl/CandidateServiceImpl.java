@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.innovaturelabs.training.contacts.entity.Candidate;
 import com.innovaturelabs.training.contacts.entity.Questinare;
@@ -54,7 +55,8 @@ public class CandidateServiceImpl implements CandidateService {
         List<Candidate> candidatesToSave = new ArrayList<>(); // Collect new candidates here
         for (CandidateForm form : forms) {
             // Check if a candidate with the same questionnaire ID already exists
-            Candidate existingCandidate = candidateRepository.findByQuestinareQuestinareId(form.getQuestinareId());
+            Candidate existingCandidate = candidateRepository
+                    .findByQuestinareQuestinareIdAndUserUserId(form.getQuestinareId(), SecurityUtil.getCurrentUserId());
             if (existingCandidate != null) {
                 throw new BadRequestException("Candidate with the same questionnaire ID already submitted");
             }
@@ -141,6 +143,22 @@ public class CandidateServiceImpl implements CandidateService {
         return filteredQuestionnaires.stream()
                 .map(QuestinClientView::new)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void delete() {
+        // Get the current user's ID
+        Integer currentUserId = SecurityUtil.getCurrentUserId();
+        
+        User user = userRepository.findById(currentUserId).orElseThrow(NotFoundException::new);
+        
+        user.setLevel(User.Level.LEVEL1);
+        
+        userRepository.save(user);
+        
+        // Delete all data associated with the current user
+        candidateRepository.deleteAllByUserUserId(currentUserId);
     }
 
 }

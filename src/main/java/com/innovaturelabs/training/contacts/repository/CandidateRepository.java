@@ -29,4 +29,10 @@ public interface CandidateRepository extends Repository<Candidate, Integer> {
 
     Candidate findByQuestinareQuestinareId(Integer questinareId);
 
+    Candidate findByQuestinareQuestinareIdAndUserUserId(Integer questinareId, Integer currentUserId);
+
+    void deleteByUserUserId(Integer currentUserId);
+
+    void deleteAllByUserUserId(Integer currentUserId);
+
 }
