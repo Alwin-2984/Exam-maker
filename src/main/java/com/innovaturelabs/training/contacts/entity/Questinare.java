@@ -5,6 +5,7 @@
  */
 package com.innovaturelabs.training.contacts.entity;
 
+import com.innovaturelabs.training.contacts.entity.User.Level;
 import com.innovaturelabs.training.contacts.form.QuestinareForm;
 import java.util.Collection;
 import java.util.Date;
@@ -30,7 +31,7 @@ public class Questinare {
     private Integer questinareId;
     private String question;
     private String realAnswer;
-    private byte level;
+    private Level level;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User user;
     @ElementCollection(fetch = FetchType.LAZY)
@@ -40,7 +41,7 @@ public class Questinare {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateDate;
 
-    public Questinare(Integer questinareId, String question, byte level, User user, Collection<String> answers,
+    public Questinare(Integer questinareId, String question, Level level, User user, Collection<String> answers,
             Date createDate, Date updateDate) {
         this.questinareId = questinareId;
         this.question = question;
@@ -99,11 +100,11 @@ public class Questinare {
         this.question = question;
     }
 
-    public byte getLevel() {
+    public Level getLevel() {
         return level;
     }
 
-    public void setLevel(byte level) {
+    public void setLevel(Level level) {
         this.level = level;
     }
 
@@ -139,63 +140,9 @@ public class Questinare {
         this.updateDate = updateDate;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((questinareId == null) ? 0 : questinareId.hashCode());
-        result = prime * result + ((question == null) ? 0 : question.hashCode());
-        result = prime * result + level;
-        result = prime * result + ((user == null) ? 0 : user.hashCode());
-        result = prime * result + ((answers == null) ? 0 : answers.hashCode());
-        result = prime * result + ((createDate == null) ? 0 : createDate.hashCode());
-        result = prime * result + ((updateDate == null) ? 0 : updateDate.hashCode());
-        return result;
-    }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Questinare other = (Questinare) obj;
-        if (questinareId == null) {
-            if (other.questinareId != null)
-                return false;
-        } else if (!questinareId.equals(other.questinareId))
-            return false;
-        if (question == null) {
-            if (other.question != null)
-                return false;
-        } else if (!question.equals(other.question))
-            return false;
-        if (level != other.level)
-            return false;
-        if (user == null) {
-            if (other.user != null)
-                return false;
-        } else if (!user.equals(other.user))
-            return false;
-        if (answers == null) {
-            if (other.answers != null)
-                return false;
-        } else if (!answers.equals(other.answers))
-            return false;
-        if (createDate == null) {
-            if (other.createDate != null)
-                return false;
-        } else if (!createDate.equals(other.createDate))
-            return false;
-        if (updateDate == null) {
-            if (other.updateDate != null)
-                return false;
-        } else if (!updateDate.equals(other.updateDate))
-            return false;
-        return true;
-    }
+
+
 
     @Override
     public String toString() {

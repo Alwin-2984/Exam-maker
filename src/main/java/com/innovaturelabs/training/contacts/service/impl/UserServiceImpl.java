@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
                 form.getEmail(),
                 passwordEncoder.encode(form.getPassword()),
                 StatusRole.Candidate.value,
-                Level.LEVEL1.value)));
+                Level.LEVEL1)));
     }
 
     @Override

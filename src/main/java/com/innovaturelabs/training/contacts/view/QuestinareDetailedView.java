@@ -6,6 +6,7 @@
 package com.innovaturelabs.training.contacts.view;
 
 import com.innovaturelabs.training.contacts.entity.Questinare;
+import com.innovaturelabs.training.contacts.entity.User.Level;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,11 +36,11 @@ public class QuestinareDetailedView {
         this.question = question;
     }
 
-    public byte getLevel() {
+    public Level getLevel() {
         return level;
     }
 
-    public void setLevel(byte level) {
+    public void setLevel(Level level) {
         this.level = level;
     }
 
@@ -70,7 +71,7 @@ public class QuestinareDetailedView {
     private String question;
     private String realAnswer;
 
-    private byte level;
+    private Level level;
     private Integer userId; // Assuming you want to include the user's name
     private List<String> answers;
     private Date createDate;

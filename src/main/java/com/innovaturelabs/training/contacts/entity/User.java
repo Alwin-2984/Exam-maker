@@ -33,10 +33,10 @@ public class User {
     }
 
     public enum Level {
-        LEVEL1((byte) 1),
-        LEVEL2((byte) 2),
-        LEVEL3((byte) 3),
-        LEVEL4((byte) 4);
+        LEVEL1((byte) 0),
+        LEVEL2((byte) 1),
+        LEVEL3((byte) 2),
+        LEVEL4((byte) 3);
 
         public final byte value;
 
@@ -51,7 +51,7 @@ public class User {
     private String name;
     private String email;
     private String password;
-    private byte level;
+    private Level level;
     private byte status;
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
@@ -69,7 +69,7 @@ public class User {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.level = 1;
+        this.level = Level.LEVEL1;
         this.status = StatusRole.Admin.value;
 
         Date dt = new Date();
@@ -77,7 +77,7 @@ public class User {
         this.updateDate = dt;
     }
 
-    public User(String name, String email, String password, byte status, byte level) {
+    public User(String name, String email, String password, byte status, Level level) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -166,11 +166,12 @@ public class User {
         return "com.innovaturelabs.training.contacts.entity.User[ userId=" + userId + " ]";
     }
 
-    public byte getLevel() {
+    public Level getLevel() {
         return level;
     }
 
-    public void setLevel(byte level) {
+    public void setLevel(Level level) {
         this.level = level;
     }
+
 }

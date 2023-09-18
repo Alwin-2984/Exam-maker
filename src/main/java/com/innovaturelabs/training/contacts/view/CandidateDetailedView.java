@@ -72,4 +72,5 @@ this.userId = candidate.getUser().getUserId();
     public void setUserId(Integer userId) {
         this.userId = userId;
     }
+
 }

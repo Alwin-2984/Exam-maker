@@ -27,6 +27,6 @@ public interface CandidateRepository extends Repository<Candidate, Integer> {
 
     List<Candidate> findById(Integer questionId);
 
-    Optional<Boolean> findByQuestinareQuestinareId(Integer questinareId);
+    Candidate findByQuestinareQuestinareId(Integer questinareId);
 
 }

@@ -10,6 +10,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.innovaturelabs.training.contacts.entity.User.Level;
+
 /**
  *
  * @author nirmal
@@ -20,7 +22,7 @@ public class QuestinareForm {
     private String question;
 
     @NotNull
-    private byte level;
+    private Level level;
 
     @NotNull
     private String realAnswer;
@@ -38,11 +40,11 @@ public class QuestinareForm {
         this.question = question;
     }
 
-    public byte getLevel() {
+    public Level getLevel() {
         return level;
     }
 
-    public void setLevel(byte level) {
+    public void setLevel(Level level) {
         this.level = level;
     }
 

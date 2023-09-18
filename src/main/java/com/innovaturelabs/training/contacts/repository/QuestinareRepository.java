@@ -6,6 +6,7 @@
 package com.innovaturelabs.training.contacts.repository;
 
 import com.innovaturelabs.training.contacts.entity.Questinare;
+import com.innovaturelabs.training.contacts.entity.User.Level;
 import com.innovaturelabs.training.contacts.view.QuestinareDetailedView;
 import com.innovaturelabs.training.contacts.view.QuestinareListView;
 import java.util.Collection;
@@ -30,8 +31,8 @@ public interface QuestinareRepository extends Repository<Questinare, Integer> {
     Questinare findStatusByUserUserId(Integer currentUserId);
 
 
-    List<Questinare> findAllByLevel(byte level);
+    List<Questinare> findAllByLevel(Level level);
 
-    Questinare findByQuestinareIdAndLevel(Integer questinareId, byte level);
+    Questinare findByQuestinareIdAndLevel(Integer questinareId, Level level);
 
 }

@@ -76,6 +76,7 @@ public class QuestinareServiceImpl implements QuestinareService {
         User userStatus = userRepository.findStatusByUserId(SecurityUtil.getCurrentUserId());
         if (userStatus.getStatus() == 1) {
             return new QuestinareDetailedView(
+
                     questinareRepository.save(new Questinare(form, SecurityUtil.getCurrentUserId())));
         } else {
             throw new BadRequestException("Invalid user");

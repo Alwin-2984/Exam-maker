@@ -6,6 +6,7 @@
 package com.innovaturelabs.training.contacts.view;
 
 import com.innovaturelabs.training.contacts.entity.User;
+import com.innovaturelabs.training.contacts.entity.User.Level;
 import com.innovaturelabs.training.contacts.json.Json;
 import java.util.Date;
 
@@ -19,7 +20,7 @@ public class UserView {
     private final String name;
     private final String email;
     private final short status;
-    private final short level;
+    private final Level level;
 
     @Json.DateTimeFormat
     private final Date createDate;
@@ -61,7 +62,7 @@ public class UserView {
         return updateDate;
     }
 
-    public short getLevel() {
+    public Level getLevel() {
         return level;
     }
 }
