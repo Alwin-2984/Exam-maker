@@ -57,7 +57,6 @@ public class QuestinareServiceImpl implements QuestinareService {
                     .map(QuestinareDetailedView::new)
                     .collect(Collectors.toList());
 
-            // return Collections.emptyList();
         }
 
     }
@@ -84,7 +83,7 @@ public class QuestinareServiceImpl implements QuestinareService {
     }
 
     public List<QuestinareDetailedView> getQuestionDetail(Integer questionId) {
-        List<Questinare> questionnaires = questinareRepository.findById(questionId);
+        List<Questinare> questionnaires = questinareRepository.findByQuestinareId(questionId);
         return questionnaires.stream()
                 .map(QuestinareDetailedView::new)
                 .collect(Collectors.toList());

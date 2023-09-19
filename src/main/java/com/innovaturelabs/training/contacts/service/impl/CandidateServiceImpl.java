@@ -6,6 +6,7 @@
 package com.innovaturelabs.training.contacts.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -47,22 +48,26 @@ public class CandidateServiceImpl implements CandidateService {
     private UserRepository userRepository;
 
     @Override
+    @Transactional
     public List<CandidateDetailedView> add(List<CandidateForm> forms) {
         List<CandidateDetailedView> detailedViews = new ArrayList<>();
         int correctAnswers = 0;
 
         // Get the current user's status and qualification level
         User userStatus = userRepository.findStatusByUserId(SecurityUtil.getCurrentUserId());
-
-        List<Candidate> candidatesToSave = new ArrayList<>(); // Collect new candidates here
+        if (userStatus.getStatus() != 0) {
+            throw new BadRequestException("Invalid user status");
+        }
 
         for (CandidateForm form : forms) {
 
             // Check if a candidate with the same questionnaire ID already exists
             Candidate existingCandidate = candidateRepository
-                    .findByQuestinareQuestinareIdAndUserUserId(form.getQuestinareId(), SecurityUtil.getCurrentUserId());
+                    .findByQuestinareQuestinareIdAndUserUserIdAndAnswerStatus(form.getQuestinareId(),
+                            SecurityUtil.getCurrentUserId(), 1);
             if (existingCandidate != null) {
-                throw new BadRequestException("Candidate with the same questionnaire ID already submitted");
+                throw new BadRequestException(
+                        "Candidate with the same questionnaire ID:" + form.getQuestinareId() + " already submitted");
             }
 
             // Retrieve the questionnaire associated with the form's questinareId
@@ -77,7 +82,7 @@ public class CandidateServiceImpl implements CandidateService {
 
             // Check if the user's status is active and their qualification level matches
             // the questionnaire's level
-            if (userStatus.getStatus() == 0 && Objects.equals(questionnaires.getLevel(), userStatus.getLevel())) {
+            if (Objects.equals(questionnaires.getLevel(), userStatus.getLevel())) {
 
                 int score = Objects.equals(questionnaires.getRealAnswer(), form.getRealAnswer()) ? 1 : 0;
                 correctAnswers += score;
@@ -87,10 +92,10 @@ public class CandidateServiceImpl implements CandidateService {
                 detailedViews.add(new CandidateDetailedView(newCandidate));
 
                 // Instead, add the new candidate to a list
-                candidatesToSave.add(newCandidate);
+                candidateRepository.save(newCandidate);
 
             } else {
-                throw new BadRequestException("Invalid user status or qualification level");
+                throw new BadRequestException(" qualification level");
             }
         }
 
@@ -131,11 +136,6 @@ public class CandidateServiceImpl implements CandidateService {
             userRepository.save(user);
         }
 
-        // Loop through and save each candidate individually
-        for (Candidate candidate : candidatesToSave) {
-            candidateRepository.save(candidate);
-        }
-
         return detailedViews;
     }
 
@@ -150,23 +150,15 @@ public class CandidateServiceImpl implements CandidateService {
         Level userLevel = userStatus.getLevel();
 
         // Find questions with a level equal to the user's level
-        List<Questinare> questionnaires = questinareRepository.findAllByLevel(userLevel);
+        List<Questinare> questionnaires = questinareRepository
+                .findQuestionsForCandidate(SecurityUtil.getCurrentUserId(), userLevel);
 
-        // Get a list of questinare_ids that the user has already answered
-        List<Integer> answeredQuestionIds = candidateRepository.findAllByUserUserId(SecurityUtil.getCurrentUserId())
-                .stream()
-                .map(candidate -> candidate.getQuestinare().getQuestinareId()) // Assuming Candidate has a reference to
-                                                                               // Questinare
-                .collect(Collectors.toList());
-
-        // Filter out questions that the user has already answered
-        List<Questinare> filteredQuestionnaires = questionnaires.stream()
-                .filter(questionnaire -> !answeredQuestionIds.contains(questionnaire.getQuestinareId()))
-                .limit(10)
-                .collect(Collectors.toList());
+        // Randomize the order of the questionnaires
+        Collections.shuffle(questionnaires);
 
         // Map the first 10 questions to QuestinClientView objects
-        return filteredQuestionnaires.stream()
+        return questionnaires.stream()
+                .limit(10)
                 .map(QuestinClientView::new)
                 .collect(Collectors.toList());
     }
