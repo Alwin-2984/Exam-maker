@@ -30,3 +30,10 @@ public interface CandidateRepository extends CrudRepository<Candidate, Integer> 
     @Query("SELECT SUM(c.answerStatus) FROM Candidate c WHERE c.user.userId = :userId")
     Integer calculateTotalPointsByUserId(Integer userId);
 }
+
+
+// SELECT *
+// FROM questinare q
+// LEFT JOIN candidate c ON q.questinare_id = c.questinare_id
+// WHERE (c.answer_status IS NULL OR c.answer_status = 0)
+// AND q.level = 0; -- Adjust the level as needed
