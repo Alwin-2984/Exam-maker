@@ -7,8 +7,10 @@ package com.innovaturelabs.training.contacts.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,13 +150,11 @@ public class CandidateServiceImpl implements CandidateService {
         // Get the current user's level
         User userStatus = userRepository.findStatusByUserId(SecurityUtil.getCurrentUserId());
 
-        int userLevel = (int) userStatus.getLevel().value;
-
+        int userLevel = userStatus.getLevel().value;
 
         // Find questions with a level equal to the user's level
         List<Questinare> questionnaires = questinareRepository
                 .findQuestionsForCandidate(SecurityUtil.getCurrentUserId(), userLevel);
-
 
         // Map the first 10 questions to QuestinClientView objects
         return questionnaires.stream()
