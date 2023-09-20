@@ -5,13 +5,6 @@
  */
 package com.innovaturelabs.training.contacts.view;
 
-import com.innovaturelabs.training.contacts.entity.Questinare;
-import com.innovaturelabs.training.contacts.entity.User.Level;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 /**
  *
  * @author nirmal

@@ -10,7 +10,6 @@ import java.util.List;
 import com.innovaturelabs.training.contacts.form.CandidateForm;
 import com.innovaturelabs.training.contacts.view.CandidateDetailedView;
 import com.innovaturelabs.training.contacts.view.QuestinClientView;
-import com.innovaturelabs.training.contacts.view.QuestinareDetailedView;
 import com.innovaturelabs.training.contacts.view.TotalPointView;
 
 /**

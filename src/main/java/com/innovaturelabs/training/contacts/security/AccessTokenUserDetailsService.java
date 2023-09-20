@@ -5,19 +5,16 @@
  */
 package com.innovaturelabs.training.contacts.security;
 
-import com.innovaturelabs.training.contacts.security.util.InvalidTokenException;
-import com.innovaturelabs.training.contacts.security.util.TokenExpiredException;
-import com.innovaturelabs.training.contacts.security.util.TokenGenerator;
-import com.innovaturelabs.training.contacts.security.util.TokenGenerator.Status;
-import java.util.Collection;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+
+import com.innovaturelabs.training.contacts.security.util.InvalidTokenException;
+import com.innovaturelabs.training.contacts.security.util.TokenExpiredException;
+import com.innovaturelabs.training.contacts.security.util.TokenGenerator;
+import com.innovaturelabs.training.contacts.security.util.TokenGenerator.Status;
 
 /**
  *

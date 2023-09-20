@@ -5,26 +5,22 @@
  */
 package com.innovaturelabs.training.contacts.service.impl;
 
-import com.innovaturelabs.training.contacts.entity.Questinare;
-import com.innovaturelabs.training.contacts.entity.User;
-import com.innovaturelabs.training.contacts.exception.BadRequestException;
-import com.innovaturelabs.training.contacts.exception.NotFoundException;
-import com.innovaturelabs.training.contacts.form.QuestinareForm;
-import com.innovaturelabs.training.contacts.repository.QuestinareRepository;
-import com.innovaturelabs.training.contacts.repository.UserRepository;
-import com.innovaturelabs.training.contacts.security.util.SecurityUtil;
-import com.innovaturelabs.training.contacts.service.QuestinareService;
-import com.innovaturelabs.training.contacts.view.QuestinareDetailedView;
-import com.innovaturelabs.training.contacts.view.QuestinareListView;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import com.innovaturelabs.training.contacts.entity.Questinare;
+import com.innovaturelabs.training.contacts.entity.User;
+import com.innovaturelabs.training.contacts.exception.BadRequestException;
+import com.innovaturelabs.training.contacts.form.QuestinareForm;
+import com.innovaturelabs.training.contacts.repository.QuestinareRepository;
+import com.innovaturelabs.training.contacts.repository.UserRepository;
+import com.innovaturelabs.training.contacts.security.util.SecurityUtil;
+import com.innovaturelabs.training.contacts.service.QuestinareService;
+import com.innovaturelabs.training.contacts.view.QuestinareDetailedView;
 
 /**
  *
@@ -89,34 +85,5 @@ public class QuestinareServiceImpl implements QuestinareService {
                 .collect(Collectors.toList());
     }
 
-    // @Override
-    // public ContactDetailView get(Integer contactId) throws NotFoundException {
-    // return questinareRepository.findByContactIdAndUserUserId(contactId,
-    // SecurityUtil.getCurrentUserId())
-    // .map((contact) -> {
-    // return new ContactDetailView(contact);
-    // }).orElseThrow(NotFoundException::new);
-    // }
-
-    // @Override
-    // @Transactional
-    // public ContactDetailView update(Integer contactId, QuestinareForm form)
-    // throws NotFoundException {
-    // return questinareRepository.findByContactIdAndUserUserId(contactId,
-    // SecurityUtil.getCurrentUserId())
-    // .map((contact) -> {
-    // return new
-    // ContactDetailView(questinareRepository.save(contact.update(form)));
-    // }).orElseThrow(NotFoundException::new);
-    // }
-
-    // @Override
-    // @Transactional
-    // public void delete(Integer contactId) throws NotFoundException {
-    // questinareRepository.delete(
-    // questinareRepository.findByContactIdAndUserUserId(contactId,
-    // SecurityUtil.getCurrentUserId())
-    // .orElseThrow(NotFoundException::new)
-    // );
-    // }
+   
 }

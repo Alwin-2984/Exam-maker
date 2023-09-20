@@ -5,12 +5,10 @@
  */
 package com.innovaturelabs.training.contacts.service;
 
-import com.innovaturelabs.training.contacts.exception.NotFoundException;
+import java.util.List;
+
 import com.innovaturelabs.training.contacts.form.QuestinareForm;
 import com.innovaturelabs.training.contacts.view.QuestinareDetailedView;
-import com.innovaturelabs.training.contacts.view.QuestinareListView;
-import java.util.Collection;
-import java.util.List;
 
 /**
  *
@@ -24,10 +22,5 @@ public interface QuestinareService {
 
     List<QuestinareDetailedView> getQuestionDetail(Integer questionId);
 
-    // ContactDetailView get(Integer contactId) throws NotFoundException;
 
-    // ContactDetailView update(Integer contactId, QuestinareForm form) throws
-    // NotFoundException;
-
-    // void delete(Integer contactId) throws NotFoundException;
 }

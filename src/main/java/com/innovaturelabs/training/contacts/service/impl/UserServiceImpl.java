@@ -5,6 +5,15 @@
  */
 package com.innovaturelabs.training.contacts.service.impl;
 
+import static com.innovaturelabs.training.contacts.security.AccessTokenUserDetailsService.PURPOSE_ACCESS_TOKEN;
+
+import java.util.Collection;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.Errors;
+
 import com.innovaturelabs.training.contacts.entity.User;
 import com.innovaturelabs.training.contacts.entity.User.Level;
 import com.innovaturelabs.training.contacts.entity.User.StatusRole;
@@ -13,7 +22,6 @@ import com.innovaturelabs.training.contacts.exception.NotFoundException;
 import com.innovaturelabs.training.contacts.form.LoginForm;
 import com.innovaturelabs.training.contacts.form.UserForm;
 import com.innovaturelabs.training.contacts.repository.UserRepository;
-import static com.innovaturelabs.training.contacts.security.AccessTokenUserDetailsService.PURPOSE_ACCESS_TOKEN;
 import com.innovaturelabs.training.contacts.security.config.SecurityConfig;
 import com.innovaturelabs.training.contacts.security.util.InvalidTokenException;
 import com.innovaturelabs.training.contacts.security.util.SecurityUtil;
@@ -22,14 +30,8 @@ import com.innovaturelabs.training.contacts.security.util.TokenGenerator;
 import com.innovaturelabs.training.contacts.security.util.TokenGenerator.Status;
 import com.innovaturelabs.training.contacts.security.util.TokenGenerator.Token;
 import com.innovaturelabs.training.contacts.service.UserService;
-import com.innovaturelabs.training.contacts.view.QuestinareListView;
 import com.innovaturelabs.training.contacts.view.LoginView;
 import com.innovaturelabs.training.contacts.view.UserView;
-import java.util.Collection;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.validation.Errors;
 
 /**
  *

@@ -5,17 +5,16 @@
  */
 package com.innovaturelabs.training.contacts.service;
 
+import java.util.Collection;
+
+import org.springframework.validation.Errors;
+
 import com.innovaturelabs.training.contacts.entity.User;
 import com.innovaturelabs.training.contacts.exception.BadRequestException;
 import com.innovaturelabs.training.contacts.form.LoginForm;
 import com.innovaturelabs.training.contacts.form.UserForm;
 import com.innovaturelabs.training.contacts.view.LoginView;
 import com.innovaturelabs.training.contacts.view.UserView;
-import java.util.Collection;
-
-import javax.validation.Valid;
-
-import org.springframework.validation.Errors;
 
 /**
  *

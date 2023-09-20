@@ -19,6 +19,7 @@ import com.innovaturelabs.training.contacts.entity.User.Level;
  */
 public interface QuestinareRepository extends CrudRepository<Questinare, Integer> {
 
+    @SuppressWarnings("unchecked")
     Questinare save(Questinare questinare);
 
     List<Questinare> findAllByUserUserId(Integer currentUserId);
@@ -33,7 +34,12 @@ public interface QuestinareRepository extends CrudRepository<Questinare, Integer
 
     Questinare findByQuestinareIdAndLevel(Integer questinareId, Level level);
 
-    @Query("SELECT q FROM Questinare q LEFT JOIN Candidate c ON q.questinareId = c.questinare.questinareId AND c.user.userId = :userId WHERE q.level = :level AND (c.answerStatus IS NULL OR c.answerStatus != 1)")
-    List<Questinare> findQuestionsForCandidate(Integer userId, Level level);
+    @Query(value = "SELECT q.* FROM questinare q " +
+            "LEFT JOIN candidate c ON q.questinare_id = c.questinare_id " +
+            "AND c.user_id = :userId " +
+            "WHERE q.level = :level " +
+            "AND (c.answer_status IS NULL OR c.answer_status != 1)" +
+            "ORDER BY (c.answer_status != 1) DESC, RAND()", nativeQuery = true)
+    List<Questinare> findQuestionsForCandidate(Integer userId,int level);
 
 }

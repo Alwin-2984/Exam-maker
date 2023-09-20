@@ -147,14 +147,14 @@ public class CandidateServiceImpl implements CandidateService {
     public List<QuestinClientView> list() {
         // Get the current user's level
         User userStatus = userRepository.findStatusByUserId(SecurityUtil.getCurrentUserId());
-        Level userLevel = userStatus.getLevel();
+
+        int userLevel = (int) userStatus.getLevel().value;
+
 
         // Find questions with a level equal to the user's level
         List<Questinare> questionnaires = questinareRepository
                 .findQuestionsForCandidate(SecurityUtil.getCurrentUserId(), userLevel);
 
-        // Randomize the order of the questionnaires
-        Collections.shuffle(questionnaires);
 
         // Map the first 10 questions to QuestinClientView objects
         return questionnaires.stream()
