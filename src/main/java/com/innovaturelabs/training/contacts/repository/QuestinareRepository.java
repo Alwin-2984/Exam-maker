@@ -35,26 +35,32 @@ public interface QuestinareRepository extends CrudRepository<Questinare, Integer
 
     Questinare findByQuestinareIdAndLevel(Integer questinareId, Level level);
 
-    // @Query(value = "SELECT DISTINCT q.*, c.answer_status AS dummy_answer_status
-    // FROM questinare q " +
-    // "LEFT JOIN candidate c ON q.questinare_id = c.questinare_id " +
-    // "AND c.user_id = :userId " +
-    // "WHERE q.level = :level " +
-    // "AND (c.answer_status IS NULL OR c.answer_status != 1) " +
-    // "ORDER BY CASE WHEN c.answer_status != 1 THEN 0 ELSE RAND() END, " +
-    // "c.answer_status ASC, RAND()", nativeQuery = true)
-    // List<Questinare> findQuestionsForCandidate(@Param("userId") Integer userId,
-    // @Param("level") int level);
-
-    // @Query(value = "SELECT q.* FROM questinare q " +
-    // "LEFT JOIN candidate c ON q.questinare_id = c.questinare_id " +
-    // "AND c.user_id = :userId " +
-    // "WHERE q.level = :level " +
-    // "AND (c.answer_status IS NULL OR c.answer_status != 1)" +
-    // "ORDER BY (c.answer_status != 1) DESC, RAND()", nativeQuery = true)
-    // List<Questinare> findQuestionsForCandidate(Integer userId, int level);
-
-    @Query(value = "SELECT DISTINCT q.*, IFNULL(c.answer_status, 0) AS dummy_answer_status, c.answer_status AS order_answer_status FROM questinare q LEFT JOIN candidate c ON q.questinare_id = c.questinare_id AND c.user_id = :userId WHERE q.level = :level   AND (c.answer_status IS NULL OR c.answer_status <> 1)   AND NOT EXISTS (     SELECT 1     FROM candidate c2     WHERE c2.questinare_id = q.questinare_id     AND c2.answer_status = 1   ) ORDER BY   CASE     WHEN c.answer_status <> 1 THEN 0     WHEN c.answer_status IS NULL THEN RAND()     ELSE 1   END,   order_answer_status ASC,   RAND();", nativeQuery = true)
+    @Query(value = "SELECT DISTINCT q.*, " +
+            "       IFNULL(c.answer_status, 0), " +
+            "       c.answer_status AS order_answer_status " +
+            "FROM questinare q " +
+            "LEFT JOIN candidate c " +
+            "    ON q.questinare_id = c.questinare_id " +
+            "    AND c.user_id = :userId " +
+            "WHERE q.level = :level " +
+            "  AND ( " +
+            "      c.answer_status IS NULL " +
+            "      OR c.answer_status <> 1 " +
+            "  ) " +
+            "  AND NOT EXISTS ( " +
+            "      SELECT 1 " +
+            "      FROM candidate c2 " +
+            "      WHERE c2.questinare_id = q.questinare_id " +
+            "        AND c2.answer_status = 1 " +
+            "  ) " +
+            "ORDER BY " +
+            "    CASE " +
+            "        WHEN c.answer_status <> 1 THEN 0 " +
+            "        WHEN c.answer_status IS NULL THEN RAND() " +
+            "        ELSE 1 " +
+            "    END, " +
+            "    order_answer_status ASC, " +
+            "    RAND() ", nativeQuery = true)
     List<Questinare> findQuestionsForCandidate(@Param("userId") Integer userId, @Param("level") int level);
 
 }

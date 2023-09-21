@@ -38,19 +38,19 @@ public class CandidateController {
         return candidateService.list();
     }
 
-     @GetMapping("/totalpoint")
-    public List<TotalPointView> totalpoint(Principal p) {
+    @GetMapping("/totalpoint")
+    public TotalPointView totalpoint(Principal p) {
         return candidateService.totalpoint();
     }
 
     @PostMapping
-    public List<CandidateDetailedView> add(@RequestBody List<CandidateForm> forms) {
+    public CandidateDetailedView add(@RequestBody List<CandidateForm> forms) {
         return candidateService.add(forms);
     }
 
     @DeleteMapping("/allprogress")
     public void delete() {
-    candidateService.delete();
+        candidateService.delete();
     }
 
 }

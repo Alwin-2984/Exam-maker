@@ -85,5 +85,4 @@ public class QuestinareServiceImpl implements QuestinareService {
                 .collect(Collectors.toList());
     }
 
-   
 }

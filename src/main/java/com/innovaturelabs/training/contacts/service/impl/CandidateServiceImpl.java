@@ -5,22 +5,18 @@
  */
 package com.innovaturelabs.training.contacts.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.innovaturelabs.training.contacts.entity.Candidate;
 import com.innovaturelabs.training.contacts.entity.Questinare;
 import com.innovaturelabs.training.contacts.entity.User;
-import com.innovaturelabs.training.contacts.entity.User.Level;
 import com.innovaturelabs.training.contacts.exception.BadRequestException;
 import com.innovaturelabs.training.contacts.exception.NotFoundException;
 import com.innovaturelabs.training.contacts.form.CandidateForm;
@@ -40,6 +36,9 @@ import com.innovaturelabs.training.contacts.view.TotalPointView;
 @Service
 public class CandidateServiceImpl implements CandidateService {
 
+    @Value("${question.limit}")
+    private int questionLimit;
+
     @Autowired
     private CandidateRepository candidateRepository;
 
@@ -51,8 +50,7 @@ public class CandidateServiceImpl implements CandidateService {
 
     @Override
     @Transactional
-    public List<CandidateDetailedView> add(List<CandidateForm> forms) {
-        List<CandidateDetailedView> detailedViews = new ArrayList<>();
+    public CandidateDetailedView add(List<CandidateForm> forms) {
         int correctAnswers = 0;
 
         // Get the current user's status and qualification level
@@ -77,13 +75,11 @@ public class CandidateServiceImpl implements CandidateService {
                     form.getQuestinareId(), userStatus.getLevel());
 
             // Check if the retrieved questionnaire is null and throw a BadRequestException
-            // if it is
             if (questionnaires == null) {
                 throw new BadRequestException("Questionnaire not found for the provided ID and level");
             }
 
-            // Check if the user's status is active and their qualification level matches
-            // the questionnaire's level
+            // Check if their qualification level matches
             if (Objects.equals(questionnaires.getLevel(), userStatus.getLevel())) {
 
                 int score = Objects.equals(questionnaires.getRealAnswer(), form.getRealAnswer()) ? 1 : 0;
@@ -91,13 +87,12 @@ public class CandidateServiceImpl implements CandidateService {
 
                 // Create the new candidate but do not save it immediately
                 Candidate newCandidate = new Candidate(form, score, SecurityUtil.getCurrentUserId());
-                detailedViews.add(new CandidateDetailedView(newCandidate));
 
                 // Instead, add the new candidate to a list
                 candidateRepository.save(newCandidate);
 
             } else {
-                throw new BadRequestException(" qualification level");
+                throw new BadRequestException("invalid qualification level");
             }
         }
 
@@ -131,6 +126,8 @@ public class CandidateServiceImpl implements CandidateService {
                 case LEVEL3:
                     user.setLevel(User.Level.LEVEL4);
                     break;
+                case LEVEL4:
+                    return new CandidateDetailedView("passed");
                 default:
                     break;
             }
@@ -138,7 +135,8 @@ public class CandidateServiceImpl implements CandidateService {
             userRepository.save(user);
         }
 
-        return detailedViews;
+        return new CandidateDetailedView("success");
+
     }
 
     private int getRequiredCorrectAnswers(double targetPercentage, List<CandidateForm> forms) {
@@ -156,9 +154,8 @@ public class CandidateServiceImpl implements CandidateService {
         List<Questinare> questionnaires = questinareRepository
                 .findQuestionsForCandidate(SecurityUtil.getCurrentUserId(), userLevel);
 
-        // Map the first 10 questions to QuestinClientView objects
         return questionnaires.stream()
-                .limit(10)
+                .limit(questionLimit)
                 .map(QuestinClientView::new)
                 .collect(Collectors.toList());
     }
@@ -180,36 +177,19 @@ public class CandidateServiceImpl implements CandidateService {
     }
 
     @Override
-    public List<TotalPointView> totalpoint() {
-        List<TotalPointView> totalPointsList = new ArrayList<>();
+    public TotalPointView totalpoint() {
+        Integer userId = SecurityUtil.getCurrentUserId();
 
-        // Get a list of distinct user IDs from the candidate table
-        List<Integer> userIds = candidateRepository.findDistinctUserIds();
+        int totalPoints = 0;
 
-        User userStatus = userRepository.findStatusByUserId(SecurityUtil.getCurrentUserId());
+        Long questionCount = 0L;
 
-        if (userStatus.getStatus() == 0) {
-            int totalPoints = candidateRepository.calculateTotalPointsByUserId(SecurityUtil.getCurrentUserId());
-
-            // Create a QuestinClientView object with the user ID and total points
-            TotalPointView totalPointView = new TotalPointView(SecurityUtil.getCurrentUserId(), totalPoints);
-
-            // Add the QuestinClientView object to the list
-            totalPointsList.add(totalPointView);
-        } else {
-            for (Integer userId : userIds) {
-                // Calculate the total points for each user
-                int totalPoints = candidateRepository.calculateTotalPointsByUserId(userId);
-
-                // Create a QuestinClientView object with the user ID and total points
-                TotalPointView totalPointView = new TotalPointView(userId, totalPoints);
-
-                // Add the QuestinClientView object to the list
-                totalPointsList.add(totalPointView);
-            }
+        if (candidateRepository.existsByUserUserId(userId)) {
+            totalPoints = candidateRepository.calculateTotalPointsByUserId(userId);
+            questionCount = candidateRepository.countTotalQuestionsByUserId(userId);
         }
 
-        return totalPointsList;
+        return new TotalPointView(userId, totalPoints, questionCount);
     }
 
 }

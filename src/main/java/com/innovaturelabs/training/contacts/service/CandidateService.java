@@ -18,12 +18,12 @@ import com.innovaturelabs.training.contacts.view.TotalPointView;
  */
 public interface CandidateService {
 
-    List<CandidateDetailedView> add(List<CandidateForm> form);
+    CandidateDetailedView add(List<CandidateForm> form);
 
     List<QuestinClientView> list();
 
     void delete();
 
-    List<TotalPointView> totalpoint();
+    TotalPointView totalpoint();
 
 }
