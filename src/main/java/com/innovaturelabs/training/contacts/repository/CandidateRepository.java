@@ -25,7 +25,6 @@ public interface CandidateRepository extends CrudRepository<Candidate, Integer> 
     void deleteAllByUserUserId(Integer currentUserId);
 
 
-    // Custom query to calculate total points for a user
     @Query("SELECT SUM(c.answerStatus) FROM Candidate c WHERE c.user.userId = :userId")
     Integer calculateTotalPointsByUserId(Integer userId);
 

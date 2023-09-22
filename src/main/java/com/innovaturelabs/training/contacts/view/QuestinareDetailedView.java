@@ -69,7 +69,7 @@ public class QuestinareDetailedView {
     }
 
     private String question;
-    private String realAnswer;
+    private int realAnswer;
 
     private Level level;
     private Integer userId; // Assuming you want to include the user's name
@@ -88,11 +88,11 @@ public class QuestinareDetailedView {
         this.realAnswer = questionnaire.getRealAnswer();
     }
 
-    public String getRealAnswer() {
+    public int getRealAnswer() {
         return realAnswer;
     }
 
-    public void setRealAnswer(String realAnswer) {
+    public void setRealAnswer(int realAnswer) {
         this.realAnswer = realAnswer;
     }
 

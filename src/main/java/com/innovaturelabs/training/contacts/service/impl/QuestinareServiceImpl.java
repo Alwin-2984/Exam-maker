@@ -6,7 +6,6 @@
 package com.innovaturelabs.training.contacts.service.impl;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,15 +58,13 @@ public class QuestinareServiceImpl implements QuestinareService {
 
     @Override
     public QuestinareDetailedView add(QuestinareForm form) throws BadRequestException {
-        int a = form.getAnswers().size();
-        for (String answer : form.getAnswers()) {
-            if (!Objects.equals(answer, form.getRealAnswer())) {
-                a = a - 1;
-                if (a == 0) {
-                    throw new BadRequestException("real answer must match options");
-                }
-            }
+        int optionsSize = form.getAnswers().size();
+        int realAnswer = form.getRealAnswer();
+
+        if (realAnswer < 1 || realAnswer > optionsSize) {
+            throw new BadRequestException("Real answer must be a valid option between 1 and " + optionsSize);
         }
+
         User userStatus = userRepository.findStatusByUserId(SecurityUtil.getCurrentUserId());
         if (userStatus.getStatus() == 1) {
             return new QuestinareDetailedView(

@@ -29,7 +29,7 @@ public class Candidate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer candidateId;
 
-    private String realAnswer;
+    private int realAnswer;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User user;
     private int answerStatus;
@@ -41,7 +41,7 @@ public class Candidate {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateDate;
 
-    public Candidate(String realAnswer, User user, Date createDate, Date updateDate) {
+    public Candidate(int realAnswer, User user, Date createDate, Date updateDate) {
         this.realAnswer = realAnswer;
         this.user = user;
         this.createDate = createDate;
@@ -73,11 +73,11 @@ public class Candidate {
         return this;
     }
 
-    public String getRealAnswer() {
+    public int getRealAnswer() {
         return realAnswer;
     }
 
-    public void setRealAnswer(String realAnswer) {
+    public void setRealAnswer(int realAnswer) {
         this.realAnswer = realAnswer;
     }
 

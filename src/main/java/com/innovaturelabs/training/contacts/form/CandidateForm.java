@@ -17,7 +17,7 @@ public class CandidateForm {
     private Integer questinareId;
 
     @NotBlank
-    private String realAnswer;
+    private int realAnswer;
 
     public Integer getQuestinareId() {
         return questinareId;
@@ -27,11 +27,11 @@ public class CandidateForm {
         this.questinareId = questinareId;
     }
 
-    public String getRealAnswer() {
+    public int getRealAnswer() {
         return realAnswer;
     }
 
-    public void setRealAnswer(String realAnswer) {
+    public void setRealAnswer(int realAnswer) {
         this.realAnswer = realAnswer;
     }
 

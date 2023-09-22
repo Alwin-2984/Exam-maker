@@ -48,6 +48,8 @@ public class CandidateServiceImpl implements CandidateService {
     @Autowired
     private UserRepository userRepository;
 
+    private String invalidUserData = "Invalid user status";
+
     @Override
     @Transactional
     public CandidateDetailedView add(List<CandidateForm> forms) {
@@ -56,45 +58,10 @@ public class CandidateServiceImpl implements CandidateService {
         // Get the current user's status and qualification level
         User userStatus = userRepository.findStatusByUserId(SecurityUtil.getCurrentUserId());
         if (userStatus.getStatus() != 0) {
-            throw new BadRequestException("Invalid user status");
+            throw new BadRequestException(invalidUserData);
         }
 
-        for (CandidateForm form : forms) {
-
-            // Check if a candidate with the same questionnaire ID already exists
-            Candidate existingCandidate = candidateRepository
-                    .findByQuestinareQuestinareIdAndUserUserIdAndAnswerStatus(form.getQuestinareId(),
-                            SecurityUtil.getCurrentUserId(), 1);
-            if (existingCandidate != null) {
-                throw new BadRequestException(
-                        "Candidate with the same questionnaire ID:" + form.getQuestinareId() + " already submitted");
-            }
-
-            // Retrieve the questionnaire associated with the form's questinareId
-            Questinare questionnaires = questinareRepository.findByQuestinareIdAndLevel(
-                    form.getQuestinareId(), userStatus.getLevel());
-
-            // Check if the retrieved questionnaire is null and throw a BadRequestException
-            if (questionnaires == null) {
-                throw new BadRequestException("Questionnaire not found for the provided ID and level");
-            }
-
-            // Check if their qualification level matches
-            if (Objects.equals(questionnaires.getLevel(), userStatus.getLevel())) {
-
-                int score = Objects.equals(questionnaires.getRealAnswer(), form.getRealAnswer()) ? 1 : 0;
-                correctAnswers += score;
-
-                // Create the new candidate but do not save it immediately
-                Candidate newCandidate = new Candidate(form, score, SecurityUtil.getCurrentUserId());
-
-                // Instead, add the new candidate to a list
-                candidateRepository.save(newCandidate);
-
-            } else {
-                throw new BadRequestException("invalid qualification level");
-            }
-        }
+        correctAnswers = answerVerificationSavingFormLoop(forms, correctAnswers, userStatus);
 
         int requiredCorrectAnswers;
 
@@ -139,16 +106,15 @@ public class CandidateServiceImpl implements CandidateService {
 
     }
 
-    private int getRequiredCorrectAnswers(double targetPercentage, List<CandidateForm> forms) {
-        return (int) Math.ceil(targetPercentage * forms.size());
-    }
-
     @Override
     public List<QuestinClientView> list() {
         // Get the current user's level
         User userStatus = userRepository.findStatusByUserId(SecurityUtil.getCurrentUserId());
-
         int userLevel = userStatus.getLevel().value;
+
+        if (userStatus.getStatus() != 0) {
+            throw new BadRequestException(invalidUserData);
+        }
 
         // Find questions with a level equal to the user's level
         List<Questinare> questionnaires = questinareRepository
@@ -162,11 +128,15 @@ public class CandidateServiceImpl implements CandidateService {
 
     @Override
     @Transactional
-    public void delete() {
+    public void delete() throws BadRequestException {
         // Get the current user's ID
         Integer currentUserId = SecurityUtil.getCurrentUserId();
 
         User user = userRepository.findById(currentUserId).orElseThrow(NotFoundException::new);
+
+        if (user.getStatus() != 0) {
+            throw new BadRequestException(invalidUserData);
+        }
 
         user.setLevel(User.Level.LEVEL1);
 
@@ -177,8 +147,16 @@ public class CandidateServiceImpl implements CandidateService {
     }
 
     @Override
-    public TotalPointView totalpoint() {
+    public TotalPointView totalpoint() throws BadRequestException {
         Integer userId = SecurityUtil.getCurrentUserId();
+
+        User userStatus = userRepository.findStatusByUserId(userId);
+        if (userStatus == null) {
+            throw new BadRequestException("User not fount");
+        }
+        if (userStatus.getStatus() != 0) {
+            throw new BadRequestException(invalidUserData);
+        }
 
         int totalPoints = 0;
 
@@ -190,6 +168,50 @@ public class CandidateServiceImpl implements CandidateService {
         }
 
         return new TotalPointView(userId, totalPoints, questionCount);
+    }
+
+    private int answerVerificationSavingFormLoop(List<CandidateForm> forms, int correctAnswers, User userStatus) {
+        for (CandidateForm form : forms) {
+
+            // Check if a candidate with the same questionnaire ID already exists
+            Candidate existingCandidate = candidateRepository
+                    .findByQuestinareQuestinareIdAndUserUserIdAndAnswerStatus(form.getQuestinareId(),
+                            SecurityUtil.getCurrentUserId(), 1);
+            if (existingCandidate != null) {
+                throw new BadRequestException(
+                        "Candidate with the same questionnaire ID:" + form.getQuestinareId() + " already submitted");
+            }
+
+            // Retrieve the questionnaire associated with the form's questinareId
+            Questinare questionnaires = questinareRepository.findByQuestinareIdAndLevel(
+                    form.getQuestinareId(), userStatus.getLevel());
+
+            // Check if the retrieved questionnaire is null and throw a BadRequestException
+            if (questionnaires == null) {
+                throw new BadRequestException("Questionnaire not found for the provided ID and level");
+            }
+
+            // Check if their qualification level matches
+            if (Objects.equals(questionnaires.getLevel(), userStatus.getLevel())) {
+
+                int score = questionnaires.getRealAnswer() == form.getRealAnswer() ? 1 : 0;
+                correctAnswers += score;
+
+                // Create the new candidate but do not save it immediately
+                Candidate newCandidate = new Candidate(form, score, SecurityUtil.getCurrentUserId());
+
+                // Instead, add the new candidate to a list
+                candidateRepository.save(newCandidate);
+
+            } else {
+                throw new BadRequestException("invalid qualification level");
+            }
+        }
+        return correctAnswers;
+    }
+
+    private int getRequiredCorrectAnswers(double targetPercentage, List<CandidateForm> forms) {
+        return (int) Math.ceil(targetPercentage * forms.size());
     }
 
 }

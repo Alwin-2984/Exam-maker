@@ -25,7 +25,7 @@ public class QuestinareForm {
     private Level level;
 
     @NotNull
-    private String realAnswer;
+    private int realAnswer;
 
     @NotNull
     private Collection<@NotBlank @Size(max = 255) String> answers;
@@ -56,12 +56,14 @@ public class QuestinareForm {
         this.answers = answers;
     }
 
-    public String getRealAnswer() {
+    public int getRealAnswer() {
         return realAnswer;
     }
 
-    public void setRealAnswer(String realAnswer) {
+    public void setRealAnswer(int realAnswer) {
         this.realAnswer = realAnswer;
     }
+
+ 
 
 }

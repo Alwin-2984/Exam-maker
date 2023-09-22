@@ -30,7 +30,7 @@ public class Questinare {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer questinareId;
     private String question;
-    private String realAnswer;
+    private int realAnswer;
     private Level level;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User user;
@@ -60,7 +60,6 @@ public class Questinare {
     }
 
     public Questinare(QuestinareForm form, Integer userId) {
-
 
         this.user = new User(userId);
         this.question = form.getQuestion();
@@ -140,23 +139,18 @@ public class Questinare {
         this.updateDate = updateDate;
     }
 
-
-
-
-
     @Override
     public String toString() {
         return "Questinare [questinareId=" + questinareId + ", question=" + question + ", level=" + level + ", user="
                 + user + ", answers=" + answers + ", createDate=" + createDate + ", updateDate=" + updateDate + "]";
     }
 
-    public String getRealAnswer() {
+    public int getRealAnswer() {
         return realAnswer;
     }
 
-    public void setRealAnswer(String realAnswer) {
+    public void setRealAnswer(int realAnswer) {
         this.realAnswer = realAnswer;
     }
 
-    
 }
