@@ -7,6 +7,8 @@ package com.innovaturelabs.training.contacts.service;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import com.innovaturelabs.training.contacts.form.QuestinareForm;
 import com.innovaturelabs.training.contacts.view.QuestinareDetailedView;
 
@@ -20,7 +22,10 @@ public interface QuestinareService {
 
     QuestinareDetailedView add(QuestinareForm form);
 
-    List<QuestinareDetailedView> getQuestionDetail(Integer questionId);
+    QuestinareDetailedView getQuestionDetail(Integer questionId);
 
+    QuestinareDetailedView editQuestionDetails(Integer questionId,QuestinareForm form);
+
+    void deleteQuestion(Integer questionId);
 
 }

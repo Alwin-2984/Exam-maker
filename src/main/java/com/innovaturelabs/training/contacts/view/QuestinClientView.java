@@ -80,13 +80,10 @@ public class QuestinClientView {
         this.question = questionnaire.getQuestion();
         this.level = questionnaire.getLevel();
         this.answers = new ArrayList<>(questionnaire.getAnswers());
+
         this.createDate = questionnaire.getCreateDate();
         this.updateDate = questionnaire.getUpdateDate();
     }
-
- 
-
- 
 
     // Getters and setters for the fields
 }

@@ -11,9 +11,11 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,11 +45,20 @@ public class QuestinareController {
         return questinareService.add(form);
     }
 
-    @GetMapping("/{question}")
-    public List<QuestinareDetailedView> getQuestionDetail(@PathVariable("question") Integer contactId) {
-        return questinareService.getQuestionDetail(contactId);
+    @GetMapping("/{questionId}")
+    public QuestinareDetailedView getQuestionDetail(@PathVariable("questionId") Integer questionId) {
+        return questinareService.getQuestionDetail(questionId);
     }
 
-    
+    @PutMapping("/{questionId}")
+    public QuestinareDetailedView editQuestionDetails(@PathVariable("questionId") Integer questionId,
+            @Valid @RequestBody QuestinareForm form) {
+        return questinareService.editQuestionDetails(questionId, form);
+    }
+
+    @DeleteMapping("/{questionId}")
+    public void deleteQuestion(@PathVariable("questionId") Integer questionId) {
+        questinareService.deleteQuestion(questionId);
+    }
 
 }

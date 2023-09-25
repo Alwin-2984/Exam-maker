@@ -76,7 +76,7 @@ public class Questinare {
         this.question = form.getQuestion();
         this.level = form.getLevel();
         this.answers = form.getAnswers();
-
+        this.realAnswer = form.getRealAnswer();
         Date dt = new Date();
         this.updateDate = dt;
 

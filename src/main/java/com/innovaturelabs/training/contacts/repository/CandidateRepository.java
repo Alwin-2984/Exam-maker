@@ -24,7 +24,6 @@ public interface CandidateRepository extends CrudRepository<Candidate, Integer> 
 
     void deleteAllByUserUserId(Integer currentUserId);
 
-
     @Query("SELECT SUM(c.answerStatus) FROM Candidate c WHERE c.user.userId = :userId")
     Integer calculateTotalPointsByUserId(Integer userId);
 
@@ -33,6 +32,9 @@ public interface CandidateRepository extends CrudRepository<Candidate, Integer> 
 
     Candidate findByQuestinareQuestinareIdAndUserUserIdAndAnswerStatus(Integer questinareId, Integer currentUserId,
             int i);
+
+    @Query(value = "SELECT COUNT(*) AS failed_attempt_count FROM candidate WHERE user_id = :userId   AND questinare_id = :questionnaireId    AND answer_status = 0;", nativeQuery = true)
+    Long countFailedAttemptsByUserIdAndQuestionnaireId(Integer userId, Integer questionnaireId);
 
     boolean existsByUserUserId(Integer userId);
 }

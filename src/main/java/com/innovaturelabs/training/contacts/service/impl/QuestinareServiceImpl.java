@@ -9,7 +9,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.innovaturelabs.training.contacts.entity.Questinare;
 import com.innovaturelabs.training.contacts.entity.User;
@@ -20,6 +22,7 @@ import com.innovaturelabs.training.contacts.repository.UserRepository;
 import com.innovaturelabs.training.contacts.security.util.SecurityUtil;
 import com.innovaturelabs.training.contacts.service.QuestinareService;
 import com.innovaturelabs.training.contacts.view.QuestinareDetailedView;
+import com.innovaturelabs.training.contacts.view.TotalPointView;
 
 /**
  *
@@ -39,7 +42,8 @@ public class QuestinareServiceImpl implements QuestinareService {
 
         User userStatus = userRepository.findStatusByUserId(SecurityUtil.getCurrentUserId());
         if (userStatus.getStatus() == 1) {
-            List<Questinare> questionnaires = questinareRepository.findAllByUserUserId(SecurityUtil.getCurrentUserId());
+            List<Questinare> questionnaires = questinareRepository.findAllByUserUserId(
+                    SecurityUtil.getCurrentUserId(), Sort.by(Sort.Direction.ASC, "level"));
 
             return questionnaires.stream()
                     .map(QuestinareDetailedView::new)
@@ -75,11 +79,57 @@ public class QuestinareServiceImpl implements QuestinareService {
         }
     }
 
-    public List<QuestinareDetailedView> getQuestionDetail(Integer questionId) {
-        List<Questinare> questionnaires = questinareRepository.findByQuestinareId(questionId);
-        return questionnaires.stream()
-                .map(QuestinareDetailedView::new)
-                .collect(Collectors.toList());
+    public QuestinareDetailedView getQuestionDetail(Integer questionId) {
+        User userStatus = userRepository.findStatusByUserId(SecurityUtil.getCurrentUserId());
+        if (userStatus.getStatus() != 1) {
+            throw new BadRequestException("Invalid user");
+
+        }
+        Questinare questionnaires = questinareRepository.findByQuestinareId(questionId);
+        if (questionnaires == null) {
+            throw new BadRequestException("Invalid questionId");
+        }
+        return new QuestinareDetailedView(questionnaires);
+    }
+
+    @Override
+    public QuestinareDetailedView editQuestionDetails(Integer questionId, QuestinareForm form) {
+        User userStatus = userRepository.findStatusByUserId(SecurityUtil.getCurrentUserId());
+        if (userStatus.getStatus() != 1) {
+            throw new BadRequestException("Invalid user");
+
+        }
+        int optionsSize = form.getAnswers().size();
+        int realAnswer = form.getRealAnswer();
+
+        if (realAnswer < 1 || realAnswer > optionsSize) {
+            throw new BadRequestException("Real answer must be a valid option between 1 and " + optionsSize);
+        }
+
+        Questinare questinare = questinareRepository.findByQuestinareId(questionId);
+        questinare.update(form);
+
+        return new QuestinareDetailedView(
+
+                questinareRepository.save(questinare));
+
+    }
+
+    @Override
+    @Transactional
+    public void deleteQuestion(Integer questionId) {
+        User userStatus = userRepository.findStatusByUserId(SecurityUtil.getCurrentUserId());
+        if (userStatus.getStatus() != 1) {
+            throw new BadRequestException("Invalid user");
+
+        }
+        Questinare questionnaires = questinareRepository.findByQuestinareId(questionId);
+        if (questionnaires == null) {
+            throw new BadRequestException("Invalid questionId");
+        }
+
+        questinareRepository.deleteByQuestinareId(questionId);
+
     }
 
 }

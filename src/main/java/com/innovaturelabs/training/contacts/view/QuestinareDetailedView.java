@@ -36,14 +36,6 @@ public class QuestinareDetailedView {
         this.question = question;
     }
 
-    public Level getLevel() {
-        return level;
-    }
-
-    public void setLevel(Level level) {
-        this.level = level;
-    }
-
     public List<String> getAnswers() {
         return answers;
     }
@@ -71,7 +63,7 @@ public class QuestinareDetailedView {
     private String question;
     private int realAnswer;
 
-    private Level level;
+    private int level;
     private Integer userId; // Assuming you want to include the user's name
     private List<String> answers;
     private Date createDate;
@@ -80,7 +72,7 @@ public class QuestinareDetailedView {
     public QuestinareDetailedView(Questinare questionnaire) {
         this.questionnaireId = questionnaire.getQuestinareId();
         this.question = questionnaire.getQuestion();
-        this.level = questionnaire.getLevel();
+        this.level = questionnaire.getLevel().value;
         this.userId = questionnaire.getUser().getUserId(); // Assuming User has a 'userName' property
         this.answers = new ArrayList<>(questionnaire.getAnswers());
         this.createDate = questionnaire.getCreateDate();
@@ -102,6 +94,14 @@ public class QuestinareDetailedView {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 
     // Getters and setters for the fields

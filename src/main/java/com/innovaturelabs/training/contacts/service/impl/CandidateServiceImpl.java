@@ -110,11 +110,11 @@ public class CandidateServiceImpl implements CandidateService {
     public List<QuestinClientView> list() {
         // Get the current user's level
         User userStatus = userRepository.findStatusByUserId(SecurityUtil.getCurrentUserId());
-        int userLevel = userStatus.getLevel().value;
 
         if (userStatus.getStatus() != 0) {
             throw new BadRequestException(invalidUserData);
         }
+        int userLevel = userStatus.getLevel().value;
 
         // Find questions with a level equal to the user's level
         List<Questinare> questionnaires = questinareRepository
@@ -197,12 +197,16 @@ public class CandidateServiceImpl implements CandidateService {
                 int score = questionnaires.getRealAnswer() == form.getRealAnswer() ? 1 : 0;
                 correctAnswers += score;
 
+                Long failedAttemptCount = candidateRepository.countFailedAttemptsByUserIdAndQuestionnaireId(
+                        SecurityUtil.getCurrentUserId(),
+                        form.getQuestinareId());
+
                 // Create the new candidate but do not save it immediately
-                Candidate newCandidate = new Candidate(form, score, SecurityUtil.getCurrentUserId());
+                Candidate newCandidate = new Candidate(form, score, SecurityUtil.getCurrentUserId(),
+                        failedAttemptCount);
 
                 // Instead, add the new candidate to a list
                 candidateRepository.save(newCandidate);
-
             } else {
                 throw new BadRequestException("invalid qualification level");
             }

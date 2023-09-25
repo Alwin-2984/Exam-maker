@@ -7,6 +7,7 @@ package com.innovaturelabs.training.contacts.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -23,11 +24,11 @@ public interface QuestinareRepository extends CrudRepository<Questinare, Integer
     @SuppressWarnings("unchecked")
     Questinare save(Questinare questinare);
 
-    List<Questinare> findAllByUserUserId(Integer currentUserId);
+    List<Questinare> findAllByUserUserId(Integer currentUserId, Sort sort);
 
     List<Questinare> findByUserUserId(Integer userId);
 
-    List<Questinare> findByQuestinareId(Integer questionId);
+    Questinare findByQuestinareId(Integer questionId);
 
     Questinare findStatusByUserUserId(Integer currentUserId);
 
@@ -62,5 +63,7 @@ public interface QuestinareRepository extends CrudRepository<Questinare, Integer
             "    order_answer_status ASC, " +
             "    RAND() ", nativeQuery = true)
     List<Questinare> findQuestionsForCandidate(@Param("userId") Integer userId, @Param("level") int level);
+
+    void deleteByQuestinareId(Integer questionId);
 
 }

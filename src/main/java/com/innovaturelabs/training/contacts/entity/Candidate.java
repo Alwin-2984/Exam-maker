@@ -27,13 +27,13 @@ public class Candidate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer candidateId;
+    private Integer answerId;
 
     private int realAnswer;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User user;
     private int answerStatus;
-
+    private Long failedAttemptCount;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Questinare questinare;
     @Temporal(TemporalType.TIMESTAMP)
@@ -51,12 +51,13 @@ public class Candidate {
     public Candidate() {
     }
 
-    public Candidate(CandidateForm form, int i, Integer userId) {
+    public Candidate(CandidateForm form, int i, Integer userId, Long failedAttemptCount) {
 
         this.user = new User(userId);
         this.questinare = new Questinare(form.getQuestinareId());
         this.realAnswer = form.getRealAnswer();
         this.answerStatus = i;
+        this.failedAttemptCount = failedAttemptCount;
         Date dt = new Date();
         this.createDate = dt;
         this.updateDate = dt;
@@ -111,14 +112,6 @@ public class Candidate {
                 + ", createDate=" + createDate + ", updateDate=" + updateDate + "]";
     }
 
-    public Integer getCandidateId() {
-        return candidateId;
-    }
-
-    public void setCandidateId(Integer candidateId) {
-        this.candidateId = candidateId;
-    }
-
     public Questinare getQuestinare() {
         return questinare;
     }
@@ -135,6 +128,20 @@ public class Candidate {
         this.answerStatus = answerStatus;
     }
 
+    public Integer getAnswerId() {
+        return answerId;
+    }
 
+    public void setAnswerId(Integer answerId) {
+        this.answerId = answerId;
+    }
+
+    public Long getFailedAttemptCount() {
+        return failedAttemptCount;
+    }
+
+    public void setFailedAttemptCount(Long failedAttemptCount) {
+        this.failedAttemptCount = failedAttemptCount;
+    }
 
 }
